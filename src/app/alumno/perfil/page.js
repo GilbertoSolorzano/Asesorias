@@ -5,11 +5,11 @@ import HamburgerMenu from "@/components/HamburgerMenu";
 
 export default function PerfilPage() {
   const alumno = {
-    nombre: "Alfonso Fernandez Cortez",
-    matricula: "22000022",
-    carrera: "Ing. Sistemas Computacionales",
-    correo: "AL22000022@ITE.EDU.MX",
-    contraseña: "**********",
+    nombre: "",
+    matricula: "",
+    carrera: "",
+    correo: "",
+    contraseña: "",
   };
 
   const [isEditing, setIsEditing] = useState(false);

@@ -50,7 +50,7 @@ export default function HamburgerMenu() {
                 Historial
               </Link>
               <Link
-                href="/material"
+                href="/alumno/material"
                 className="block px-4 py-2 hover:bg-gray-100 text-black"
                 onClick={() => setIsOpen(false)}
               >
