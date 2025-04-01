@@ -43,7 +43,7 @@ export default function HamburgerMenu() {
                 Asesorías
               </Link>
               <Link
-                href="/historial"
+                href="/alumno/historial"
                 className="block px-4 py-2 hover:bg-gray-100 text-black"
                 onClick={() => setIsOpen(false)}
               >

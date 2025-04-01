@@ -25,7 +25,7 @@ export default function PerfilPage() {
       <div className="flex-1 bg-gray-100 p-8 relative">
         {/* Encabezado */}
         <header className="text-center mb-8">
-          <h1 className="text-2xl font-bold">Perfil</h1>
+        <h1 className="text-2xl font-bold text-zinc-950">Perfil de Alumno</h1>
         </header>
 
         {/* Contenido del Perfil sobre la página */}
