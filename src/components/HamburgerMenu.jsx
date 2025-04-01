@@ -56,6 +56,13 @@ export default function HamburgerMenu() {
               >
                 Material de Apoyo
               </Link>
+              <Link
+                href="/perfil"
+                className="block px-4 py-2 hover:bg-gray-100 text-black"
+                onClick={() => setIsOpen(false)}
+              >
+                Perfil
+              </Link>
               <button
                 onClick={() => {
                   alert("Cerrando sesión...");
