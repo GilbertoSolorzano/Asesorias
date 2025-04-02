@@ -3,8 +3,30 @@
 import { useState } from "react";
 import Link from "next/link";
 
-export default function HamburgerMenu() {
+export default function HamburgerMenu({role}) {
   const [isOpen, setIsOpen] = useState(false);
+  // Menu de opciones para cada tipo de usuario
+  const menuOptions = {
+    alumno: [
+      {label: "Inicio", path: "/alumno"},
+      {label: "Asesorías realizadas", path: "/alumno/historial"},
+      {label: "Material de apoyo", path: "/alumno/material"},
+      {label: "Perfil", path: "/alumno/perfil"}
+    ],
+    asesor: [
+      {label: "Inicio", path: "/asesor"},
+      {label: "Asesorías realizadas", path: "/asesor/historial"},
+      {label: "Perfil", path: "/asesor/perfil"}
+    ],
+    administrador: [
+      {label: "Inicio", path: "/administrador"},
+      {label: "Asesores", path: "/administrador/asesores"},
+      {label: "Asesorias finalizadas", path: "/administrador/historial"},
+      {label: "Alumnos", path: "/administrador/alumnos"},
+      {label: "Encuestas", path: "/administrador/encuestas"},
+      {label: "Material de apoyo", path: "/administrador/material"}
+    ],
+  };
 
   return (
     <>
@@ -19,7 +41,7 @@ export default function HamburgerMenu() {
       {/* Menú deslizante */}
       {isOpen && (
         <div className="fixed inset-0 z-50 flex">
-          {/* Fondo semitransparente para cerrar el menú al hacer clic */}
+          {/* Fondo oscuro para cerrar al hacer clic */}
           <div
             className="fixed inset-0 bg-black opacity-50"
             onClick={() => setIsOpen(false)}
@@ -27,7 +49,7 @@ export default function HamburgerMenu() {
 
           {/* Panel del menú */}
           <div className="relative bg-white w-64 p-4">
-            {/* Botón para cerrar el menú */}
+            {/* Botón de cierre */}
             <button
               onClick={() => setIsOpen(false)}
               className="absolute top-4 right-4 text-gray-600 text-2xl focus:outline-none"
@@ -35,35 +57,18 @@ export default function HamburgerMenu() {
               ✖
             </button>
             <nav className="mt-10">
-              <Link
-                href="/alumno"
-                className="block px-4 py-2 hover:bg-gray-100 text-black"
-                onClick={() => setIsOpen(false)}
-              >
-                Asesorías
-              </Link>
-              <Link
-                href="/alumno/historial"
-                className="block px-4 py-2 hover:bg-gray-100 text-black"
-                onClick={() => setIsOpen(false)}
-              >
-                Historial
-              </Link>
-              <Link
-                href="/alumno/material"
-                className="block px-4 py-2 hover:bg-gray-100 text-black"
-                onClick={() => setIsOpen(false)}
-              >
-                Material de Apoyo
-              </Link>
-              
-              <Link
-                href="/alumno/perfil"
-                className="block px-4 py-2 hover:bg-gray-100 text-black"
-                onClick={() => setIsOpen(false)}
-              >
-                Perfil
-              </Link>
+              {/* Genera los links según el rol */}
+              {menuOptions[role]?.map((option) => (
+                <Link
+                  key={option.path}
+                  href={option.path}
+                  className="block px-4 py-2 hover:bg-gray-100 text-black"
+                  onClick={() => setIsOpen(false)}
+                >
+                  {option.label}
+                </Link>
+              ))}
+              {/* Botón de cerrar sesión */}
               <button
                 onClick={() => {
                   alert("Cerrando sesión...");
