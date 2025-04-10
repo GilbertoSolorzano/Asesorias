@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Sistema de Asesorías
 
-## Getting Started
+Un sistema de asesorías desarrollado en React (.jsx) que permite gestionar, programar y realizar chats en vivo entre alumnos y asesores. La plataforma ofrece funcionalidades para agendar sesiones, llevar el historial de asesorías, compartir materiales y comunicarse en tiempo real a través de un sistema de mensajería intuitivo.
 
-First, run the development server:
+## Tabla de Contenidos
+
+- [Características](#características)
+- [Tecnologías Utilizadas](#tecnologías-utilizadas)
+- [Instalación](#instalación)
+- [Uso](#uso)
+- [Estructura del Proyecto](#estructura-del-proyecto)
+- [Contribuciones](#contribuciones)
+- [Licencia](#licencia)
+- [Contacto](#contacto)
+
+## Características
+
+- **Gestión de Usuarios:** Registro e inicio de sesión para alumnos, asesores y administradores.  
+- **Perfil de Usuario:** Administración de perfiles, incluyendo fotografía (almacenada o referenciada a través de URL).  
+- **Gestión de Materias y Temas:** Cada materia cuenta con varios temas para especificar áreas de consulta.  
+- **Agenda de Asesorías:** Sistema para reservar y programar sesiones de asesoría, asignando asesores automáticamente o de manera manual.  
+- **Chat en Tiempo Real:** Intercambio de mensajes en un chat integrado por cada sesión de asesoría, con validación de remitentes.  
+- **Historial y Reportes:** Registro del historial de asesorías, con posibilidad de generar reportes y estadísticas de uso.
+
+## Tecnologías Utilizadas
+
+- **React:** La librería principal para la construcción de interfaces de usuario en .jsx.  
+- **React Router:** Para la navegación y rutas dentro de la aplicación.  
+- **Redux (o Context API):** Gestión del estado global de la aplicación.  
+- **Socket.io (o similar):** Comunicación en tiempo real para el chat de asesorías.  
+- **Axios / Fetch API:** Para consumir la API RESTful que gestiona la lógica del backend.  
+- **CSS / SASS / Styled Components:** Estilizado de componentes y maquetación responsiva.  
+- **Node.js & Express:** (Opcional) Para el backend que administra la lógica de negocio y comunicación con la base de datos.  
+- **Base de datos SQL (MariaDB/MySQL):** Para almacenar datos de usuarios, materias, temas, asesorías y mensajes.
+
+## Instalación
+
+### Requisitos Previos
+
+- **Node.js** (versión recomendada 14 o superior)  
+- **npm** o **yarn**
+
+### Clonar el Repositorio
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+git clone https://github.com/tuusuario/sistema-asesorias.git
+cd sistema-asesorias
