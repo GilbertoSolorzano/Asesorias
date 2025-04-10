@@ -65,13 +65,13 @@ function Login() {
         <div className="flex justify-center space-x-4">
           <a
             className="inline-block align-baseline font-bold text-sm text-[#212227] hover:text-[#637074]"
-            href="#"
+            href=""
           >
             Crear cuenta
           </a>
           <a
             className="inline-block align-baseline font-bold text-sm text-[#212227] hover:text-[#637074]"
-            href="#"
+            href="/login/quiero_ser_asesor"
           >
             Quiero ser asesor
           </a>
