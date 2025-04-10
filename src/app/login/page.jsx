@@ -41,7 +41,7 @@ function Login() {
           />
         </div>
 
-        {/* Botón "CONTINUAR" con estilo más parecido */}
+        
         <div className="flex items-center justify-center mb-4">
           <button
             className="bg-[#BDD4E7] text-[#212227] font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -55,7 +55,7 @@ function Login() {
         <div className="flex justify-center mb-6">
           <a
             className="inline-block align-baseline font-bold text-sm text-[#212227] hover:text-[#637074]"
-            href="#"
+            href="/login/olvidaste_password"
           >
             Olvide la contraseña
           </a>
