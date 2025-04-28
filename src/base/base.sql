@@ -35,6 +35,7 @@ CREATE TABLE Asesor (
 -- Tabla Administrador: la llave primaria es "matricula"
 CREATE TABLE Administrador (
     matricula VARCHAR(50) PRIMARY KEY,
+    nombre VARCHAR (100) NOT NULL,
     email VARCHAR(100) NOT NULL,
     password VARCHAR(100) NOT NULL
 ) ENGINE = InnoDB;

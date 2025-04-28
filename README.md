@@ -9,7 +9,6 @@ Un sistema de asesorías desarrollado en React (.jsx) que permite gestionar, pro
 - [Instalación](#instalación)
 - [Uso](#uso)
 - [Estructura del Proyecto](#estructura-del-proyecto)
-- [Contribuciones](#contribuciones)
 - [Licencia](#licencia)
 - [Contacto](#contacto)
 
