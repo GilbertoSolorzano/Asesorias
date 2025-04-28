@@ -1,4 +1,4 @@
-import React from 'react';
+import Link from 'next/link';
 
 
 function Login() {
@@ -14,7 +14,7 @@ function Login() {
 
         {/* Espacio para el logo del ITE */}
         <div className="flex justify-center mb-6">
-          <img src="logo.jpg" alt="Logo ITE" className="w-24 h-24" />
+          <img src="/img/image.png" alt="Logo ITE" className="w-24 h-24" />
         </div>
 
         <div className="mb-4">
@@ -41,14 +41,15 @@ function Login() {
           />
         </div>
 
-        
         <div className="flex items-center justify-center mb-4">
+        <Link href="/alumno">
           <button
             className="bg-[#BDD4E7] text-[#212227] font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             type="button"
           >
             CONTINUAR
           </button>
+          </Link>
         </div>
 
         {/* Enlace "Olvide la contraseña" */}
