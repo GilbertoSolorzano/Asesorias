@@ -28,11 +28,11 @@ const AsesorPage = () => {
 
             {/*-------------------------- Contenido principal -----------------------*/}
             
-            <main className="grid grid-cols-3 gap-8">
+            <main className="flex flex-col sm:flex-row gap-4">
 
             {/* Botón para abrir modal */}
             <div
-                className="flex flex-col items-center justify-center border-2 border-dashed border-blue-300 rounded-md p-4 hover:bg-blue-50 cursor-pointer"
+                className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl rounded-lg p-4 flex flex-col items-center justify-center border-2 border-dashed border-[#BDD4E7] hover:bg-blue-50 cursor-pointer"
                 onClick={() => setIsModalOpen(true)}
             >
                 <p className="text-gray-500 text-sm mb-2">SOLICITUDES</p>
