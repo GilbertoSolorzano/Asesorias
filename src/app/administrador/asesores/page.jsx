@@ -26,7 +26,7 @@ return (
             <HamburgerMenu  role="administrador"/>
         </aside>
         
-        <div className="flex-1 p-8 bg-white rounded-lg shadow-lg m-4">
+        <div className="flex-1 p-8 bg-white rounded-lg shadow-lg m-4 flex flex-col items-center">
         <h1 className="text-3xl font-bold mb-6 text-center">Asesores</h1>
 
         <div className="bg-[#7E8DA9] w-full p-6 rounded-3xl flex flex-col items-center">
