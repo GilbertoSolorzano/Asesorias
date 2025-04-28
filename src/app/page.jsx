@@ -42,7 +42,7 @@ function Login() {
         </div>
 
         <div className="flex items-center justify-center mb-4">
-        <Link href="/alumno">
+        <Link href="/administrador">
           <button
             className="bg-[#BDD4E7] text-[#212227] font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             type="button"
