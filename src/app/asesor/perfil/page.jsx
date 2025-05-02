@@ -76,13 +76,13 @@ const PerfilPage = () => {
 
           {/* Contraseña */}
           <div className="flex items-center">
-            <label className="w-32">Contraseña:</label>
+            <label className="w-32">Contraseña actual:</label>
             <input type="password" className="flex-1 p-2 text-black rounded bg-[#FFFFFF]" />
           </div>
 
           {/* Cambiar contraseña */}
           <div className="flex items-center">
-            <label className="w-32">Cambiar contraseña:</label>
+            <label className="w-32">Nueva contraseña:</label>
             <input
               type="password"
               value={newPassword}
