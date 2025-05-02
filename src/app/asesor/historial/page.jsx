@@ -10,7 +10,7 @@ const HistorialPage = () => {
         <HamburgerMenu role="asesor" />
       </aside>
   
-      <div className="flex flex-col items-center bg-white w-full h-full">
+      <main className="flex-1 overflow-y-auto flex-col items-center bg-white w-full h-full">
         <div className="w-full h-64 sm:h-80 md:h-96 mb-6 flex items-center justify-center">
           <AsesorDataGraph />
         </div>
@@ -19,7 +19,7 @@ const HistorialPage = () => {
           <AsesorSecCard />
           <AsesorSecCard />
         </div>
-      </div>
+      </main>
     </div>
   )
 }
