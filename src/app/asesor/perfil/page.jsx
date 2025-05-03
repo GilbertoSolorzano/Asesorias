@@ -79,15 +79,19 @@ const PerfilPage = () => {
             <label className="w-32">Contraseña actual:</label>
             <input type="password" className="flex-1 p-2 text-black rounded bg-[#FFFFFF]" />
           </div>
-
+         {/* Cambiar contraseña */}
+         <div className="flex items-center">
+            <label className="w-32">Nueva Contraseña:</label>
+            <input type="password" className="flex-1 p-2 text-black rounded bg-[#FFFFFF]" />
+          </div>
           {/* Cambiar contraseña */}
           <div className="flex items-center">
-            <label className="w-32">Nueva contraseña:</label>
+            <label className="w-32">Confirme su nueva contraseña:</label>
             <input
               type="password"
               value={newPassword}
               onChange={e => setNewPassword(e.target.value)}
-              placeholder="ingresa tu nueva contraseña"
+              placeholder="Repite tu nueva contraseña"
               className="flex-1 p-2 text-black rounded bg-[#FFFFFF]"
             />
           </div>
