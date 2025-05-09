@@ -51,6 +51,23 @@ app.post('/api/login', (req, res) => {
 
     tryLogin(0);
 });
+app.get('/api/asesores', (req, res) => {
+    db.query('SELECT matricula, nombre, email AS correo FROM asesor', (err, results) => {
+        if (err) {
+            console.error('Error al obtener asesores:', err);
+            return res.status(500).json({ error: 'Error al consultar la base de datos' });
+        }
+
+        // Puedes agregar campos simulados de horas y calificación si aún no están en la tabla
+        const asesoresConExtras = results.map((asesor) => ({
+            ...asesor,
+            horas: Math.floor(Math.random() * 100), // Ejemplo temporal
+            calificacion: Math.floor(Math.random() * 4) + 7 // entre 7 y 10
+        }));
+
+        res.json(asesoresConExtras);
+    });
+});
 
 // Iniciar servidor
 app.listen(port, () => {

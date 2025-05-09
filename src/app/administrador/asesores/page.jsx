@@ -1,18 +1,20 @@
 'use client';
 
 import HamburgerMenu from "@/components/HamburgerMenu";
-import { useState } from 'react';
-
-
-const asesoresData = [
-{ matricula: '229302', nombre: 'Abraham H.', horas: 75, correo: 'Abrahamh@ite.edu.mx', calificacion: 8 },
-{ matricula: '229321', nombre: 'Barry L.', horas: 67, correo: 'barryl@ite.edu.mx', calificacion: 7 },
-{ matricula: '331213', nombre: 'Carlos S.', horas: 99, correo: 'carlosS@ite.edu.mx', calificacion: 8 },
-{ matricula: '3212131', nombre: 'Diana O.', horas: 43, correo: 'DianaO@ite.edu.mx', calificacion: 9 },
-];
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 
 const TablaAsesores = () => {
-const [search, setSearch] = useState('');
+    const [asesoresData, setAsesoresData] = useState([]);
+    const [search, setSearch] = useState('');
+    useEffect(() => {
+    axios.get('http://localhost:3001/api/asesores')
+        .then((res) => setAsesoresData(res.data))
+        .catch((err) => {
+            console.error('Error al obtener asesores:', err);
+            alert('No se pudieron cargar los asesores.');
+        });
+    }, []);
 
 const filteredAsesores = asesoresData.filter((asesor) =>
     asesor.nombre.toLowerCase().includes(search.toLowerCase()) ||
