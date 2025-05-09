@@ -43,12 +43,12 @@ export default function HamburgerMenu({role}) {
         <div className="fixed inset-0 z-50 flex">
           {/* Fondo oscuro para cerrar al hacer clic */}
           <div
-            className="fixed inset-0 bg-black opacity-50"
+            className="fixed inset-0 bg-[#212227] opacity-50"
             onClick={() => setIsOpen(false)}
           ></div>
 
           {/* Panel del menú */}
-          <div className="relative bg-black w-64 p-4">
+          <div className="relative bg-[#212227] w-64 p-4">
             {/* Botón de cierre */}
             <button
               onClick={() => setIsOpen(false)}
@@ -62,7 +62,7 @@ export default function HamburgerMenu({role}) {
                 <Link
                   key={option.path}
                   href={option.path}
-                  className="block px-4 py-2 hover:bg-gray-900 text-white"
+                  className="block px-4 py-2 text-center text-white hover:bg-white hover:text-black rounded-l-2xl"
                   onClick={() => setIsOpen(false)}
                 >
                   {option.label}
@@ -74,7 +74,7 @@ export default function HamburgerMenu({role}) {
                   alert("Cerrando sesión...");
                   setIsOpen(false);
                 }}
-                className="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-900"
+                className="block w-full text-center px-4 py-2 text-red-600  hover:bg-white hover:text-red-600 rounded-l-2xl"
               >
                 Cerrar Sesión
               </button>

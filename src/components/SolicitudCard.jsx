@@ -1,9 +1,8 @@
 'use client'
 import React, { useState } from 'react'
 
-const SolicitudCard = ({ onClose }) => {
-    const [visible, setVisible] = useState(true);
-    if (!visible) return null;
+const SolicitudCard = ({ solicitudes = [], onClose, onAceptar }) => {
+  if (solicitudes.length === 0) return null;
 
     return (
         <div className="flex justify-center items-center h-screen drop-shadow-md rounded-md">
@@ -17,16 +16,20 @@ const SolicitudCard = ({ onClose }) => {
               >✖
               </button>
             </div>
+            
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 overflow-y-auto max-h-96 p-2">
-              {[...Array(8)].map((_, index) => (
+              {solicitudes.map((solicitud) => (
                 <div
-                  key={index}
+                  key={solicitud.id}
                   className="bg-[#BDD4E7] p-4 max-w-xs rounded border border-black text-center"
                 >
-                  <p>Materia / Tema</p>
-                  <p>Nombre</p>
-                  <p>Notas</p>
-                  <button className="bg-green-500 text-white border-none px-4 sm:px-3 md:px-4 py-1 sm:py-1 md:py-2 mt-2 cursor-pointer rounded">
+                  <p><strong>Materia:</strong> {solicitud.materia}</p>
+                  <p><strong>Nombre:</strong> {solicitud.nombre}</p>
+                  <p><strong>Notas:</strong> {solicitud.notas}</p>
+                  <button 
+                    className="bg-green-500 text-white border-none px-4 sm:px-3 md:px-4 py-1 sm:py-1 md:py-2 mt-2 cursor-pointer rounded"
+                    onClick={() => onAceptar(solicitud.id)}
+                  >
                     Aceptar
                   </button>
                 </div>
