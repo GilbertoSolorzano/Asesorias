@@ -1,23 +1,27 @@
 'use client';
 
 import HamburgerMenu from "@/components/HamburgerMenu";
-import { useState } from 'react';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 
-
-const asesoresData = [
-{ matricula: '229302', nombre: 'Abraham H.', correo: 'Abrahamh@ite.edu.mx' },
-{ matricula: '229321', nombre: 'Barry L.', correo: 'barryl@ite.edu.mx'},
-{ matricula: '331213', nombre: 'Carlos S.', correo: 'carlosS@ite.edu.mx' },
-{ matricula: '3212131', nombre: 'Diana O.', correo: 'DianaO@ite.edu.mx'},
-];
 
 const TablaAlumn = () => {
-const [search, setSearch] = useState('');
+    const [alumnosData, setAlumnosData] = useState([]);
+    const [search, setSearch] = useState('');
+    useEffect(() => {
+    axios.get('http://localhost:3001/api/alumnos')
+        .then((res) => setAlumnosData(res.data))
+        .catch((err) => {
+            console.error('Error al obtener alumnoes:', err);
+            alert('No se pudieron cargar los alumnoes.');
+        });
+    }, []);
 
-const filteredAsesores = asesoresData.filter((asesor) =>
-    asesor.nombre.toLowerCase().includes(search.toLowerCase()) ||
-    asesor.matricula.includes(search) ||
-    asesor.correo.toLowerCase().includes(search.toLowerCase())
+const filteredalumnoes = alumnosData.filter((alumno) =>
+    alumno.nombre.toLowerCase().includes(search.toLowerCase()) ||
+    alumno.matricula.includes(search) ||
+    alumno.correo.toLowerCase().includes(search.toLowerCase()) ||
+    alumno.carrera.toLowerCase().includes(search.toLowerCase())
 );
 
 return (
@@ -50,14 +54,16 @@ return (
                     <th>Matrícula</th>
                     <th>Nombre</th>
                     <th>Correo</th>
+                    <th>Carrera</th>
                 </tr>
                 </thead>
                 <tbody>
-                {filteredAsesores.map((asesor, index) => (
+                {filteredalumnoes.map((alumno, index) => (
                     <tr key={index} className="border-t">
-                    <td>{asesor.matricula}</td>
-                    <td>{asesor.nombre}</td>
-                    <td>{asesor.correo}</td>
+                    <td>{alumno.matricula}</td>
+                    <td>{alumno.nombre}</td>
+                    <td>{alumno.correo}</td>
+                    <td>{alumno.carrera}</td>
                     </tr>
                 ))}
                 </tbody>

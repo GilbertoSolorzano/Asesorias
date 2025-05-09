@@ -68,6 +68,20 @@ app.get('/api/asesores', (req, res) => {
         res.json(asesoresConExtras);
     });
 });
+app.get('/api/alumnos', (req, res) => {
+    const sql = `
+        SELECT a.matricula, a.nombre, a.email AS correo, c.nombreCarrera AS carrera
+        FROM alumno a
+        JOIN carrera c ON a.idCarrera = c.idCarrera
+    `;
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.error('Error al obtener alumnos:', err);
+            return res.status(500).json({ error: 'Error al consultar la base de datos' });
+        }
+        res.json(results);
+    });
+});
 
 // Iniciar servidor
 app.listen(port, () => {
