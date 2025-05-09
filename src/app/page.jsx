@@ -1,18 +1,42 @@
-import Link from 'next/link';
+'use client'
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
+import { useState } from 'react';
 
 function Login() {
+  const [matricula, setMatricula] = useState('');
+  const [password, setPassword] = useState('');
+  const router = useRouter();
+
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post('http://localhost:3001/api/login', {
+        matricula,
+        password
+      });
+
+      const { tipoUsuario } = response.data;
+
+      // Redirecciona según el tipo de usuario
+      if (tipoUsuario === 'administrador') router.push('/administrador');
+      else if (tipoUsuario === 'asesor') router.push('/asesor');
+      else if (tipoUsuario === 'alumno') router.push('/alumno');
+      else alert('No se reconoce el tipo de usuario.');
+    } catch (error) {
+      alert('Credenciales incorrectas o error del servidor.');
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#637074]">
       <div className="bg-[#FFFF] p-8 rounded shadow-md w-96 h-4/5">
-        {/* Header con el título centrado */}
         <div className="text-center mb-6">
           <h2 className="text-2xl font-semibold text-[#212227]">
             PROGRAMA INSTITUCIONAL DE ASESORIAS (PIA)
           </h2>
         </div>
 
-        {/* Espacio para el logo del ITE */}
         <div className="flex justify-center mb-6">
           <img src="/img/image.png" alt="Logo ITE" className="w-24 h-24" />
         </div>
@@ -23,9 +47,10 @@ function Login() {
           </label>
           <input
             className="appearance-none border rounded w-full py-2 px-3 text-[#212227] leading-tight focus:outline-none focus:shadow-outline"
-            id="accessNumber"
             type="text"
             placeholder="Ingresa tu número de acceso"
+            value={matricula}
+            onChange={(e) => setMatricula(e.target.value)}
           />
         </div>
 
@@ -35,24 +60,23 @@ function Login() {
           </label>
           <input
             className="appearance-none border rounded w-full py-2 px-3 text-[#212227] mb-3 leading-tight focus:outline-none focus:shadow-outline"
-            id="password"
             type="password"
             placeholder="Ingresa tu contraseña"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
         </div>
 
         <div className="flex items-center justify-center mb-4">
-        <Link href="/administrador">
           <button
             className="bg-[#BDD4E7] text-[#212227] font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             type="button"
+            onClick={handleLogin}
           >
             CONTINUAR
           </button>
-          </Link>
         </div>
 
-        {/* Enlace "Olvide la contraseña" */}
         <div className="flex justify-center mb-6">
           <a
             className="inline-block align-baseline font-bold text-sm text-[#212227] hover:text-[#637074]"
@@ -62,7 +86,6 @@ function Login() {
           </a>
         </div>
 
-        {/* Botones "Crear cuenta" y "Quiero ser asesor" centrados */}
         <div className="flex justify-center space-x-4">
           <a
             className="inline-block align-baseline font-bold text-sm text-[#212227] hover:text-[#637074]"
