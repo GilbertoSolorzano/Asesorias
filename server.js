@@ -82,6 +82,28 @@ app.get('/api/alumnos', (req, res) => {
         res.json(results);
     });
 });
+app.get('/api/asesorias/finalizadas', (req, res) => {
+    const sql = `
+        SELECT
+        m.nombreMateria AS material,
+        a.nombre AS nombre_asesor,
+        al.nombre AS nombre_alumno,
+        ase.fecha_acordada
+        FROM Asesoria AS ase
+        JOIN Asesor AS a ON ase.matriculaAsesor = a.matricula
+        JOIN Alumno AS al ON ase.matriculaAlumno = al.matricula
+        JOIN Tema AS t ON ase.idTema = t.idTema
+        JOIN Materia AS m ON t.idMateria = m.idMateria
+        WHERE ase.estado = 3;
+    `;
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.error('Error al obtener asesorias:', err);
+            return res.status(500).json({ error: 'Error al consultar la base de datos' });
+        }
+        res.json(results);
+    });
+});
 
 // Iniciar servidor
 app.listen(port, () => {
