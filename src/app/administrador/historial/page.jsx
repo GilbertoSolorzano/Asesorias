@@ -1,4 +1,5 @@
 'use client'
+import HamburgerMenu from "@/components/HamburgerMenu";
 import axios from 'axios'; // Asegúrate de tener axios importado
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js';
 import { useEffect, useState } from 'react';
@@ -58,7 +59,7 @@ export default function AsesoriasFinalizadas() {
     <div className="flex relative">
       {/* Sidebar */}
       <aside className="bg-[#212227] w-20 flex flex-col items-center py-4">
-        {/* Aquí va tu componente de menú */}
+                  <HamburgerMenu  role="administrador"/>
       </aside>
       <div className="min-h-screen w-full bg-gray-300 flex flex-col items-center p-6">
         <div className="bg-white w-full max-w-6xl rounded-lg shadow-md p-6">
