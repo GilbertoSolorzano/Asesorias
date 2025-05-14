@@ -1,7 +1,6 @@
 "use client";
 
-import React from 'react'
-import { useState } from "react";
+import React, { useState, useEffect } from 'react';
 import HamburgerMenu from "@/components/HamburgerMenu";
 import AsesorSecCard from '@/components/AsesorSecCard';
 import TerminarAsesoria from '@/components/TerminarAsesoria';
@@ -10,6 +9,8 @@ import SolicitudCard from '@/components/SolicitudCard';
 const AsesorPage = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isFinalizarModalOpen, setIsFinalizarModalOpen] = useState(false);
+    const [asesorias, setAsesorias] = useState([]);
+    const [asesoriaSeleccionada, setAsesoriaSeleccionada] = useState(null);
     
     const [solicitudes, setSolicitudes] = useState([
         { id: 1, materia: "Álgebra", nombre: "Luis", notas: "Urgente" },
@@ -20,6 +21,26 @@ const AsesorPage = () => {
     const eliminarSolicitud = (id) => {
         setSolicitudes((prev) => prev.filter((s) => s.id !== id));
     };
+
+    const matriculaAsesor = 'S101';
+
+    useEffect(() => {
+        const fetchAsesorias = async () => {
+            try {
+                const res = await fetch(`http://localhost:3001/api/asesorias/activas?matricula=${matriculaAsesor}`);
+                if (!res.ok) {
+                    throw new Error(`Error al cargar asesorías: ${res.status} - ${res.statusText}`);
+                }
+                const data = await res.json();
+                setAsesorias(data);
+            } catch (error) {
+                console.error('Error al cargar asesorías activas:', error);
+            }
+        };
+
+        fetchAsesorias();
+    }, [matriculaAsesor]);
+
 
     return (
         <div className="flex flex-col md:flex-row h-screen">
@@ -34,10 +55,8 @@ const AsesorPage = () => {
                 <header className="text-center mb-8">
                     <h1 className="text-2xl font-bold text-zinc-950">BIENVENIDO ASESOR!</h1>
                 </header>
-
-                {/*-------------------------- Contenido principal -----------------------*/}
                 
-                <main className="flex flex-col sm:flex-row gap-4">
+                <section className="flex flex-col sm:flex-row gap-4">
                     {/* Botón para abrir modal */}
                     <div
                         className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl rounded-lg p-4 flex flex-col items-center justify-center border-2 border-dashed border-[#BDD4E7] hover:bg-blue-50 cursor-pointer"
@@ -53,17 +72,27 @@ const AsesorPage = () => {
                         <span className="text-gray-600 text-2xl font-bold">+</span>
                         </div>
                     </div>
-                    <div>
-                        <AsesorSecCard 
-                            nombre="Daniel" 
-                            tema="Integrales Simples" 
-                            fecha="2025-03-31" 
-                            lugar="Aula 406" 
-                            hora="18:00:00"
-                            onFinalizar={() => setIsFinalizarModalOpen(true)}
-                        />
+                    <div className='flex flex-col md:flex-row gap-4'>
+                        {/* Asesorias Activas */}
+                        {asesorias.map( (a) => (
+                            <AsesorSecCard 
+                                key={a.idAsesoria}
+                                tema={a.tema}
+                                nombre={a.nombreAlumno} 
+                                fechaAcordada={new Date(a.fecha).toLocaleString('es-MX', {
+                                    dateStyle: 'medium',
+                                    timeStyle: 'short'
+                                })}
+                                lugar={a.lugar}
+                                onFinalizar={() => {
+                                    setAsesoriaSeleccionada(a.idAsesoria);
+                                    setIsFinalizarModalOpen(true);
+                                }}
+                                onModificar={ () => console.log('Modificar', a.idAsesoria)}
+                            />
+                        ))}
                     </div>
-                </main>
+                </section>
                 {/*--------------------------- Modales -----------------------------*/}
                 {isModalOpen && (
                 <div className="absolute top-0.5 left-1/4 w-1/2 z-50">
