@@ -119,7 +119,7 @@ export default function CrearMateriasTemas() {
     
     {/* Header arriba */}
     <header className="text-center mb-6">
-      <h1 className="text-2xl font-bold text-zinc-950">Bienvenido al material para los alumnos</h1>
+      <h1 className="text-2xl font-bold text-zinc-950">Bienvenido a las materias y temas</h1>
     </header>
 
     {/* Contenido principal en dos columnas */}
