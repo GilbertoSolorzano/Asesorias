@@ -1,9 +1,29 @@
+'use client'
 import AsesorDataGraph from '@/components/AsesorDataGraph'
-import AsesorSecCard from '@/components/AsesorSecCard'
+import AsesorCard from '@/components/AsesorCard'
 import HamburgerMenu from '@/components/HamburgerMenu'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 const HistorialPage = () => {
+  const matriculaAsesor = 'S102';
+  const [asesoriaTerminada, setAsesoriaTerminada] = useState([])
+
+  useEffect(() => {
+    const fetchAsesorias = async () => {
+        try {
+            const res = await fetch(`http://localhost:3001/api/asesor/asesorias/asesorias-finalizadas?matricula=${matriculaAsesor}`);
+            if (!res.ok) {
+                throw new Error(`Error al cargar asesorías finalizadas: ${res.status} - ${res.statusText}`);
+            }
+            const data = await res.json();
+            setAsesoriaTerminada(data);
+        } catch (error) {
+            console.error('Error al cargar asesorías finalizadas:', error);
+        }
+    };
+
+    fetchAsesorias();
+}, [matriculaAsesor]);
   return (
     <div className="flex flex-col md:flex-row h-screen">
       <aside className="bg-[#212227] w-full md:w-20 flex flex-col items-center py-4 md:h-full min-h-[60px]">
@@ -15,9 +35,19 @@ const HistorialPage = () => {
           <AsesorDataGraph />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 w-full justify-center gap-4 p-4 overflow-y-auto">
-          <AsesorSecCard />
-          <AsesorSecCard />
-          <AsesorSecCard />
+          {asesoriaTerminada.map( (at, index) => (
+            <AsesorCard
+              key={index}
+              tema={at.tema}
+              nombre={at.nombreAlumno}
+              fecha={new Date(at.fecha).toLocaleString('es-MX', {
+                dateStyle: 'medium',
+                timeStyle: 'short'
+              })}
+              status="Finalizada" // si deseas mostrar un estado fijo
+              onMensaje={() => console.log("Mensaje a", at.nombreAlumno)} // opcional
+            />
+          ))}
         </div>
       </main>
     </div>
