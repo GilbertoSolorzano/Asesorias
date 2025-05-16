@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 // Importar rutas
 const loginRoutes = require('./routes/login');
 const adminRoutes = require('./routes/admin');
-// const alumnosRoutes = require('./routes/alumnos');
+const alumnosRoutes = require('./routes/alumno');
 const asesorRoutes = require('./routes/asesor');
 // const preguntasRoutes = require('./routes/preguntas');
 
@@ -20,6 +20,7 @@ const asesorRoutes = require('./routes/asesor');
 app.use('/api', loginRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/asesor', asesorRoutes);
+app.use('/api/alumno', alumnosRoutes);
 
 
 // Iniciar servidor
