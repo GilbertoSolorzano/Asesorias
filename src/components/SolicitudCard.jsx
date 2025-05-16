@@ -18,14 +18,14 @@ const SolicitudCard = ({ solicitudes = [], onClose, onAceptar }) => {
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 overflow-y-auto max-h-96 p-2">
-              {solicitudes.map((solicitud) => (
+              {solicitudes.map((solicitud, index) => (
                 <div
-                  key={solicitud.id}
+                  key={index}
                   className="bg-[#BDD4E7] p-4 max-w-xs rounded border border-black text-center"
                 >
-                  <p><strong>Materia:</strong> {solicitud.materia}</p>
-                  <p><strong>Nombre:</strong> {solicitud.nombre}</p>
-                  <p><strong>Notas:</strong> {solicitud.notas}</p>
+                  <p className='text-xs font-bold'>Tema:{solicitud.materia}</p>
+                  <p className='text-xs'>Nombre:{solicitud.nombre}</p>
+                  <p className='text-xs'>Notas:{solicitud.notas}</p>
                   <button 
                     className="bg-green-500 text-white border-none px-4 sm:px-3 md:px-4 py-1 sm:py-1 md:py-2 mt-2 cursor-pointer rounded"
                     onClick={() => onAceptar(solicitud.id)}
