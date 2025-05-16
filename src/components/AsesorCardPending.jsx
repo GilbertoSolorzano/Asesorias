@@ -1,10 +1,13 @@
 "use client";
 
-export default function AsesorCardPending({ tema, status, onModificar, onEliminar }) {
+export default function AsesorCardPending({ materia, tema, status, onModificar, onEliminar }) {
   return (
     <div className="border rounded-lg p-4 bg-yellow-50 shadow-md">
       <h3 className="text-lg font-bold">Solicitud Pendiente</h3>
-      
+      <p>
+        <strong>Materia:</strong> {materia}
+      </p>
+
       <p>
         <strong>Tema:</strong> {tema}
       </p>

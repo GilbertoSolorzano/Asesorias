@@ -62,19 +62,30 @@ router.get('/perfil/:matricula', (req, res) => {
   });
 });
 
-/**
- * 4) CRUD de Asesorías
- */
-
-// Listar asesorías (filtrable por matrícula)
 router.get('/asesorias', (req, res) => {
   const { matricula } = req.query;
-  let sql = 'SELECT * FROM Asesoria';
+
+  let sql = `
+   SELECT 
+    a.idAsesoria,
+    a.matriculaAlumno,
+    a.idTema,
+    a.lugar,
+    a.estado,
+    a.fecha_creacion,
+    t.nombreTema,
+    m.nombreMateria
+  FROM Asesoria a
+  JOIN Tema t ON a.idTema = t.idTema
+  JOIN Materia m ON t.idMateria = m.idMateria
+  `;
+
   const params = [];
   if (matricula) {
-    sql += ' WHERE matriculaAlumno = ?';
+    sql += ' WHERE a.matriculaAlumno = ?';
     params.push(matricula);
   }
+
   db.query(sql, params, (err, results) => {
     if (err) {
       console.error('Error al obtener asesorías:', err);
@@ -84,21 +95,8 @@ router.get('/asesorias', (req, res) => {
   });
 });
 
-// Obtener una asesoría por ID
-router.get('/asesorias/:idAsesoria', (req, res) => {
-  const { idAsesoria } = req.params;
-  const sql = 'SELECT * FROM Asesoria WHERE idAsesoria = ?';
-  db.query(sql, [idAsesoria], (err, results) => {
-    if (err) {
-      console.error('Error al obtener asesoría:', err);
-      return res.status(500).json({ error: 'Error al consultar asesoría' });
-    }
-    if (results.length === 0) {
-      return res.status(404).json({ error: 'Asesoría no encontrada' });
-    }
-    res.json(results[0]);
-  });
-});
+
+ 
 
 // Crear nueva solicitud de asesoría
 router.post('/asesorias', (req, res) => {
@@ -125,21 +123,6 @@ router.post('/asesorias', (req, res) => {
   });
 });
 
-// Eliminar una asesoría
-router.delete('/asesorias/:idAsesoria', (req, res) => {
-  const { idAsesoria } = req.params;
-  const sql = 'DELETE FROM Asesoria WHERE idAsesoria = ?';
-  db.query(sql, [idAsesoria], (err, result) => {
-    if (err) {
-      console.error('Error al eliminar asesoría:', err);
-      return res.status(500).json({ error: 'Error al eliminar asesoría' });
-    }
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ error: 'Asesoría no encontrada' });
-    }
-    res.json({ message: 'Asesoría eliminada' });
-  });
-});
 
 // Modificar una asesoría existente
 router.put('/asesorias/:idAsesoria', (req, res) => {
@@ -155,6 +138,7 @@ router.put('/asesorias/:idAsesoria', (req, res) => {
     updates.push('idTema = ?');
     params.push(idTema);
   }
+  
   if (lugar !== undefined) {
     updates.push('lugar = ?');
     params.push(lugar);

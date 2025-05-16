@@ -20,7 +20,7 @@ export default function HomePage() {
   // 2) Cargar solicitudes pendientes
   useEffect(() => {
     if (!matricula) return;
-    fetch("http://localhost:3001/api/alumno/asesorias")
+    fetch(`http://localhost:3001/api/alumno/asesorias?matricula=${matricula}`)
       .then((res) => res.json())
       .then((all) => {
         // filtrar por este alumno y estado === 1 (pendiente)
@@ -75,7 +75,8 @@ export default function HomePage() {
               {pendientes.map((a) => (
                 <AsesorCardPending
                   key={a.idAsesoria}
-                  tema={a.idTema /* o busca el nombre de tema si prefieres */}
+                   materia={a.nombreMateria}
+                   tema={a.nombreTema}
                   status="Pendiente"
                   onModificar={() => handleModificar(a.idAsesoria)}
                   onEliminar={() => handleEliminar(a.idAsesoria)}
