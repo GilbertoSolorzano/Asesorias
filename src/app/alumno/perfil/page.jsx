@@ -1,18 +1,58 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import HamburgerMenu from "@/components/HamburgerMenu";
 
 export default function PerfilPage() {
-  const alumno = {
-    nombre: "",
-    matricula: "",
-    carrera: "",
-    correo: "",
-    contraseña: "",
-  };
-
+  const [alumno, setAlumno] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+
+
+  const matricula = "22760235";
+
+  useEffect(() => {
+    async function fetchAlumno() {
+      try {
+        const res = await fetch("http://localhost:3001/api/alumnos");
+        if (!res.ok) throw new Error("Error al cargar lista de alumnos");
+        const all = await res.json();
+
+        const data = all.find((a) => a.matricula === matricula);
+        if (!data) throw new Error("Alumno no encontrado");
+
+        setAlumno({
+          nombre:    data.nombre,
+          matricula: data.matricula,
+          carrera:   data.carrera,
+          email:     data.correo
+        });
+      } catch (err) {
+        console.error(err);
+        console.error("[PerfilPage] ", err);
+        setAlumno(null);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  fetchAlumno();
+}, [matricula]);
+
+   if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p>Cargando perfil...</p>
+      </div>
+    );
+  }
+
+  if (!alumno) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p>Error: no se pudo cargar la información del alumno.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen relative">
@@ -51,7 +91,7 @@ export default function PerfilPage() {
                 className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600 transition"
                 onClick={() => setIsEditing(!isEditing)}
               >
-                {isEditing ? "Guardar" : "Cambiar Contraseña"}
+                { "Cambiar Contraseña"}
               </button>
             </div>
           </div>
