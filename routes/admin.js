@@ -57,46 +57,88 @@ router.get('/asesorias/finalizadas', (req, res) => {
 router.get('/preguntas', (req, res) => {
     const sql = `SELECT * FROM PreguntaEncuesta`;
     db.query(sql, (err, results) => {
-      if (err) {
-        console.error('Error al obtener preguntas:', err);
-        return res.status(500).json({ error: 'Error en la base de datos' });
-      }
-  
-      const agrupadas = {
-        alumno: results.filter(p => p.tipoEncuesta === 'alumno'),
-        asesor: results.filter(p => p.tipoEncuesta === 'asesor'),
-      };
-  
-      res.json(agrupadas);
+        if (err) {
+            console.error('Error al obtener preguntas:', err);
+            return res.status(500).json({ error: 'Error en la base de datos' });
+        }
+        const agrupadas = {
+            alumno: results.filter(p => p.tipoEncuesta === 'alumno'),
+            asesor: results.filter(p => p.tipoEncuesta === 'asesor'),
+        };
+        res.json(agrupadas);
     });
 });
 router.post('/preguntas', (req, res) => {
     const { tipoEncuesta, enunciado } = req.body;
-  
+
     if (!tipoEncuesta || !enunciado) {
-      return res.status(400).json({ error: 'Faltan campos requeridos' });
-    }
-  
+        return res.status(400).json({ error: 'Faltan campos requeridos' });
+    } 
     const sql = 'INSERT INTO PreguntaEncuesta (tipoEncuesta, enunciado) VALUES (?, ?)';
     db.query(sql, [tipoEncuesta, enunciado], (err, result) => {
-      if (err) {
-        console.error('Error al insertar pregunta:', err);
-        return res.status(500).json({ error: 'Error al insertar la pregunta' });
-      }
-  
-      res.status(201).json({ message: 'Pregunta insertada correctamente', idPregunta: result.insertId });
+        if (err) {
+            console.error('Error al insertar pregunta:', err);
+            return res.status(500).json({ error: 'Error al insertar la pregunta' });
+        }
+    
+        res.status(201).json({ message: 'Pregunta insertada correctamente', idPregunta: result.insertId });
     });
 });
 router.delete('/preguntas/:id', (req, res) => {
     const { id } = req.params;
     const sql = `DELETE FROM PreguntaEncuesta WHERE idPregunta = ?`;
-  
+
     db.query(sql, [id], (err) => {
-      if (err) {
-        console.error('Error al eliminar la pregunta:', err);
-        return res.status(500).json({ error: 'Error al eliminar' });
-      }
-      res.json({ success: true });
+        if (err) {
+            console.error('Error al eliminar la pregunta:', err);
+            return res.status(500).json({ error: 'Error al eliminar' });
+        }
+        res.json({ success: true });
     });
 });
+router.get('/materias', (req, res) => {
+    db.query('SELECT idMateria, nombreMateria FROM Materia', (err, results) => {
+        if (err) {
+            console.error('Error al obtener materias:', err);
+            return res.status(500).json({ error: 'Error al consultar la base de datos' });
+        }
+        res.json(results);
+        });
+    });
+router.post('/materiales', (req, res) => {
+        const { titulo, contenido, descripcion, idMateria } = req.body;
+        const sql = `
+            INSERT INTO MaterialApoyo (titulo, contenido, descripcion, idMateria)
+            VALUES (?, ?, ?, ?)
+        `;
+        db.query(sql, [titulo, contenido, descripcion, idMateria], (err, result) => {
+            if (err) {
+                console.error('Error al insertar material:', err);
+                return res.status(500).json({ error: 'Error en el servidor' });
+            }
+            res.json({ success: true, message: 'Material insertado correctamente' });
+        });
+});
+router.get('/materiales', (req, res) => {
+    const sql = 'SELECT * FROM MaterialApoyo';
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.error('Error al obtener materiales:', err);
+            return res.status(500).json({ error: 'Error del servidor' });
+        }
+        res.json(results);
+        });
+    });
+router.delete('/materiales/:id', (req, res) => {
+    const { id } = req.params;
+    const sql = 'DELETE FROM MaterialApoyo WHERE idMaterial = ?';
+    db.query(sql, [id], (err, result) => {
+        if (err) {
+        console.error('Error al eliminar material:', err);
+        return res.status(500).json({ error: 'Error al eliminar' });
+        }
+        res.json({ success: true });
+    });
+    });
+
 module.exports = router;

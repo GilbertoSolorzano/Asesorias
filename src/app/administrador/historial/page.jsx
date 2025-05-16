@@ -32,7 +32,7 @@ export default function AsesoriasFinalizadas() {
       .then(res => {
         const datos = res.data;
         setDatosAsesores(datos);
-        console.log('Datos asignados a datosAsesores:', datos);  
+        console.log('Datos asignados a datosAsesores:', datos);
 
         // Agrupar los datos por materia
         const materialesContados = agruparPorMateria(datos);
