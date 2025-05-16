@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import HamburgerMenu from "@/components/HamburgerMenu";
 import AsesorSecCard from '@/components/AsesorSecCard';
-import TerminarAsesoria from '@/components/TerminarAsesoria';
+import HamburgerMenu from "@/components/HamburgerMenu";
 import SolicitudCard from '@/components/SolicitudCard';
+import TerminarAsesoria from '@/components/TerminarAsesoria';
+import { useEffect, useState } from 'react';
 
 const AsesorPage = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,7 +27,7 @@ const AsesorPage = () => {
     useEffect(() => {
         const fetchAsesorias = async () => {
             try {
-                const res = await fetch(`http://localhost:3001/api/asesorias/activas?matricula=${matriculaAsesor}`);
+                const res = await fetch(`http://localhost:3001/api/asesor/asesorias/activas?matricula=${matriculaAsesor}`);
                 if (!res.ok) {
                     throw new Error(`Error al cargar asesorías: ${res.status} - ${res.statusText}`);
                 }
