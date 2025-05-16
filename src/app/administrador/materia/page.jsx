@@ -41,7 +41,18 @@ export default function CrearMateriasTemas() {
     };
 
     const agregarMateria = () => {
-        if (!nuevaMateria.trim()) return;
+        const nombreLimpio = nuevaMateria.trim().toLowerCase();
+
+        if (!nombreLimpio) return;
+
+        const yaExiste = materias.some(
+            (m) => m.nombreMateria.trim().toLowerCase() === nombreLimpio
+        );
+
+        if (yaExiste) {
+            alert("La materia ya existe.");
+            return;
+        }
     
         axios.post('http://localhost:3001/api/admin/materia', { nombreMateria: nuevaMateria })
         .then((res) => {
@@ -104,7 +115,17 @@ export default function CrearMateriasTemas() {
         <aside className="bg-[#212227] w-20 flex flex-col items-center py-4">
             <HamburgerMenu  role="administrador"/>
         </aside>
+        <div className="flex-1 flex flex-col p-8 bg-gray-100 overflow-hidden">
+    
+    {/* Header arriba */}
+    <header className="text-center mb-6">
+      <h1 className="text-2xl font-bold text-zinc-950">Bienvenido al material para los alumnos</h1>
+    </header>
+
+    {/* Contenido principal en dos columnas */}
+    <div className="flex flex-1 overflow-hidden">
         <div className="w-1/3 bg-white p-6 rounded-lg shadow space-y-4">
+
             <label className="block font-semibold">1: Materia</label>
             <select
             className="w-full border rounded p-2"
@@ -181,6 +202,8 @@ export default function CrearMateriasTemas() {
                 </div>
             </div>
             ))}
+        </div>
+        </div>
         </div>
         </div>
     );
