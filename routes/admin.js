@@ -1,6 +1,34 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
+
+router.get('/asesorias', (req, res) => {
+    const sql = `
+        SELECT 
+            a.idAsesoria,
+            al.nombre AS alumno,
+            asr.nombre AS asesor,
+            t.nombreTema AS tema,
+            a.fecha_acordada,
+            a.estado,
+            a.lugar
+        FROM Asesoria a
+        JOIN Alumno al ON a.matriculaAlumno = al.matricula
+        LEFT JOIN Asesor asr ON a.matriculaAsesor = asr.matricula
+        JOIN Tema t ON a.idTema = t.idTema
+        ORDER BY a.fecha_creacion DESC
+    `;
+
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.error('Error al obtener asesorías:', err);
+            return res.status(500).json({ error: 'Error al consultar la base de datos' });
+        }
+        res.json(results);
+    });
+});
+
+
 router.get('/asesores', (req, res) => {
     db.query('SELECT matricula, nombre, email AS correo FROM asesor', (err, results) => {
         if (err) {
@@ -44,7 +72,7 @@ router.get('/asesorias/finalizadas', (req, res) => {
         JOIN Alumno AS al ON ase.matriculaAlumno = al.matricula
         JOIN Tema AS t ON ase.idTema = t.idTema
         JOIN Materia AS m ON t.idMateria = m.idMateria
-        WHERE ase.estado = 3;
+        WHERE ase.estado = 4;
     `;
     db.query(sql, (err, results) => {
         if (err) {
