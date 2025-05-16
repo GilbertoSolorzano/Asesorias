@@ -2,23 +2,58 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 
-router.get('/perfil', (req, res) => {
-    const sql = `
-        SELECT a.matricula, a.nombre, a.email AS correo, c.nombreCarrera AS carrera
-        FROM alumno a
-        JOIN carrera c ON a.idCarrera = c.idCarrera
-    `;
-    db.query(sql, (err, results) => {
-        if (err) {
-            console.error('Error al obtener alumnos:', err);
-            return res.status(500).json({ error: 'Error al consultar la base de datos' });
-        }
-        res.json(results);
-    });
+// Crear nueva solicitud de asesoría (POST /asesorias)
+// routes/alumno.js
+
+router.post('/asesorias', (req, res) => {
+  console.log('Datos recibidos:', req.body);
+
+  const { matriculaAlumno, idTema, lugar } = req.body;
+
+  // Validar campos obligatorios
+  if (!matriculaAlumno || !idTema) {
+    return res.status(400).json({ error: 'Faltan campos obligatorios: matriculaAlumno o idTema.' });
+  }
+
+  const estado = 1;
+  const fechaCreacion = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+  const sql = `
+    INSERT INTO Asesoria
+      (matriculaAlumno, idTema, lugar, estado, fecha_creacion)
+    VALUES (?, ?, ?, ?, ?)
+  `;
+
+  db.query(
+    sql,
+    [matriculaAlumno, idTema, lugar || null, estado, fechaCreacion],
+    (err, result) => {
+      if (err) {
+        console.error('Error al crear solicitud:', err);
+        return res.status(500).json({ error: 'Error al crear solicitud' });
+      }
+      res.status(201).json({ message: 'Solicitud creada', id: result.insertId });
+    }
+  );
 });
 
-//"http://localhost:3001/api/alumno" +++++ como nombres esto /perfil
 
+
+// Ruta GET /perfil
+router.get('/perfil', (req, res) => {
+  const sql = `
+    SELECT a.matricula, a.nombre, a.email AS correo, c.nombreCarrera AS carrera
+    FROM alumno a
+    JOIN carrera c ON a.idCarrera = c.idCarrera
+  `;
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error('Error al obtener alumnos:', err);
+      return res.status(500).json({ error: 'Error al consultar la base de datos' });
+    }
+    res.json(results);
+  });
+});
 
 // Obtener todas las materias
 router.get('/materias', (req, res) => {
@@ -44,63 +79,5 @@ router.get('/temas/:idMateria', (req, res) => {
     res.json(results);
   });
 });
-
-// Crear nueva solicitud de asesoría
-router.post('/asesorias', (req, res) => {
-  const {
-    matriculaAlumno,
-    idTema,
-    lugar,
-    nivelUrgencia,
-    fechaLimite,
-    observaciones,
-  } = req.body;
-
-  // Validaciones básicas
-  if (!matriculaAlumno || !idTema || !lugar) {
-    return res.status(400).json({ error: 'Faltan datos obligatorios: matriculaAlumno, idTema o lugar.' });
-  }
-
-  // Estado siempre 1 al crear
-  const estado = 1;
-
-  // Formatear fecha de creación a formato MySQL DATETIME
-  const fechaCreacion = new Date().toISOString().slice(0, 19).replace('T', ' ');
-
-  // La fecha límite puede ser null o undefined, valida y formatea si existe
-  let fechaLimiteFormateada = null;
-  if (fechaLimite) {
-    fechaLimiteFormateada = new Date(fechaLimite).toISOString().slice(0, 19).replace('T', ' ');
-  }
-
-  const sql = `
-    INSERT INTO Asesoria 
-      (matriculaAlumno, idTema, lugar, estado, fecha_creacion, fecha_limite, nivel_urgencia, observaciones)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-  `;
-
-  db.query(
-    sql,
-    [
-      matriculaAlumno,
-      idTema,
-      lugar,
-      estado,
-      fechaCreacion,
-      fechaLimiteFormateada,
-      nivelUrgencia,
-      observaciones || null,
-    ],
-    (err, result) => {
-      if (err) {
-        console.error('Error al crear solicitud:', err);
-        return res.status(500).json({ error: 'Error al crear solicitud' });
-      }
-      res.status(201).json({ message: 'Solicitud creada', id: result.insertId });
-    }
-  );
-});
-
-module.exports = router;
 
 module.exports = router;

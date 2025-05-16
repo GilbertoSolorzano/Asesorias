@@ -1,7 +1,7 @@
 // db.js
 
 const mysql = require('mysql2');
-require('dotenv').config({ path: '../.env' });
+
 
 const db = mysql.createConnection({
     // {{{{       MODIFICAR CREDENCIALES SEGUN SEA EL CASO      }}}}
