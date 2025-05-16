@@ -11,10 +11,14 @@ export default function CrearAsesoriaModal({ onClose, matriculaAlumno }) {
   // Carga materias
   useEffect(() => {
     fetch('http://localhost:3001/api/alumno/materias')
-      .then((r) => r.json())
-      .then(setMaterias)
-      .catch(console.error);
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then(data => setMaterias(data))
+      .catch(err => console.error('Error cargando materias:', err));
   }, []);
+
 
   // Carga temas según materia
   useEffect(() => {

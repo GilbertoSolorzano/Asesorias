@@ -4,6 +4,7 @@ export default function AsesorCardPending({ tema, status, onModificar, onElimina
   return (
     <div className="border rounded-lg p-4 bg-yellow-50 shadow-md">
       <h3 className="text-lg font-bold">Solicitud Pendiente</h3>
+      
       <p>
         <strong>Tema:</strong> {tema}
       </p>
