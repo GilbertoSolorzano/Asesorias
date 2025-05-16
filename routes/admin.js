@@ -139,6 +139,78 @@ router.delete('/materiales/:id', (req, res) => {
         }
         res.json({ success: true });
     });
+});
+// Obtener todas las materias con sus temas
+router.get('/materia', (req, res) => {
+    const query = 'SELECT * FROM Materia';
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error al obtener materias:', err);
+            return res.status(500).json({ error: 'Error al obtener materias' });
+        }
+        res.json(results);
+    });
+});
+
+// Obtener temas de una materia específica
+router.get('/:idMateria/temas', (req, res) => {
+    const { idMateria } = req.params;
+    const query = 'SELECT * FROM Tema WHERE idMateria = ?';
+    db.query(query, [idMateria], (err, results) => {
+        if (err) {
+        console.error('Error al obtener temas:', err);
+        return res.status(500).json({ error: 'Error al obtener temas' });
+        }
+        res.json(results);
+});
+});
+
+// Crear una nueva materia
+router.post('/materia', (req, res) => {
+    const { nombreMateria } = req.body;
+    if (!nombreMateria) {
+        return res.status(400).json({ error: 'El nombre de la materia es obligatorio' });
+    }
+
+    const query = 'INSERT INTO Materia (nombreMateria) VALUES (?)';
+    db.query(query, [nombreMateria], (err, result) => {
+        if (err) {
+        console.error('Error al crear la materia:', err);
+        return res.status(500).json({ error: 'Error al crear la materia' });
+        }
+        res.status(201).json({ idMateria: result.insertId, nombreMateria });
+    });
+});
+
+// Crear un nuevo tema para una materia existente
+router.post('/:idMateria/temas', (req, res) => {
+    const { idMateria } = req.params;
+    const { nombreTema, descripcion } = req.body;
+
+    if (!nombreTema) {
+        return res.status(400).json({ error: 'El nombre del tema es obligatorio' });
+    }
+
+    const query = 'INSERT INTO Tema (idMateria, nombreTema, descripcion) VALUES (?, ?, ?)';
+    db.query(query, [idMateria, nombreTema, descripcion || null], (err, result) => {
+        if (err) {
+        console.error('Error al crear el tema:', err);
+        return res.status(500).json({ error: 'Error al crear el tema' });
+        }
+        res.status(201).json({ idTema: result.insertId, nombreTema, descripcion });
+});
+});
+router.delete('/materia/:id', (req, res) => {
+    const idMateria = req.params.id;
+    
+    db.query('DELETE FROM Materia WHERE idMateria = ?', [idMateria], (err, result) => {
+        if (err) {
+            console.error('Error al eliminar la materia:', err);
+            return res.status(500).json({ error: 'Error al eliminar la materia' });
+        }
+    
+        res.json({ message: 'Materia eliminada correctamente' });
+        });
     });
 
 module.exports = router;

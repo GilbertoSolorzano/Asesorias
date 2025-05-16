@@ -1,7 +1,7 @@
 // components/HamburgerMenu.jsx
 "use client";
-import { useState } from "react";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function HamburgerMenu({role}) {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,7 +24,9 @@ export default function HamburgerMenu({role}) {
       {label: "Asesorias finalizadas", path: "/administrador/historial"},
       {label: "Alumnos", path: "/administrador/alumnos"},
       {label: "Encuestas", path: "/administrador/encuestas"},
-      {label: "Material de apoyo", path: "/administrador/material"}
+      {label: "Material de apoyo", path: "/administrador/material"},
+      {label: "Materias y temas", path: "/administrador/materia"}
+
     ],
   };
 

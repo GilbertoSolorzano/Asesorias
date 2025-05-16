@@ -69,6 +69,7 @@ CREATE TABLE Tema (
     descripcion TEXT,
     CONSTRAINT fk_tema_materia
         FOREIGN KEY (idMateria) REFERENCES Materia(idMateria)
+        ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 --------------------------------------------------
