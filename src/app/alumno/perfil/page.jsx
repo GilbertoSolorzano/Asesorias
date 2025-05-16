@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from "react";
+import axios from "axios";
 import HamburgerMenu from "@/components/HamburgerMenu";
 
 export default function PerfilPage() {
@@ -25,15 +26,15 @@ useEffect(() => {
 }, []);
 
   useEffect(() => {
-    if (!matricula) return; // si no hay matrícula, no hacer nada
-    async function fetchAlumno() {
-      try {
-        const res = await fetch("http://localhost:3001/api/alumnos");
-        if (!res.ok) throw new Error("Error al cargar lista de alumnos");
-        const all = await res.json();
+      if (!matricula) return; // si no hay matrícula, no hacer nada
+      async function fetchAlumno() {
+        try {
+          const res = await axios.get("http://localhost:3001/api/alumno/perfil");
 
-        const data = all.find((a) => a.matricula === matricula);
-        if (!data) throw new Error("Alumno no encontrado");
+      const all = res.data; // axios ya convierte la respuesta en JSON
+
+      const data = all.find((a) => a.matricula === matricula);
+      if (!data) throw new Error("Alumno no encontrado");
 
         setAlumno({
           nombre:    data.nombre,
