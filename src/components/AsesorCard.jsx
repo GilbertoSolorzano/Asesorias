@@ -1,24 +1,20 @@
 "use client";
 
-export default function AsesorCard({ nombre, tema, fecha, status, onMensaje }) {
+export default function AsesorCard({ tema, nombre, fecha, status, onMensaje }) {
   return (
-    <div className="border rounded-lg p-4 bg-white shadow-md">
-      <h3 className="text-lg font-bold">{nombre}</h3>
-      <p>
-        <strong>Tema:</strong> {tema}
-      </p>
-      <p>
-        <strong>Fecha:</strong> {fecha}
-      </p>
-      <p>
-        <strong>Status:</strong> {status}
-      </p>
-      <button
-        onClick={onMensaje}
-        className="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-      >
+    <div className="items-center justify-center  border rounded-lg p-4 bg-[#66D575] shadow-md">
+      <h3 className="text-xs font-bold text-center"> {nombre}</h3>
+      <p className="text-xs text-center">Tema: {tema}</p>
+      <p className="text-xs text-center">Fecha: {fecha}</p>
+      <p className="text-xs text-center">Status: {status}</p>
+      <div className="flex justify-center mt-2">
+        <button
+          onClick={onMensaje}
+          className="bg-[#FFC943] text-black px-4 py-2 rounded-3xl hover:bg-blue-600"
+        >
         Mensaje
-      </button>
+        </button>
+      </div>
     </div>
   );
 }
