@@ -9,7 +9,7 @@ const TablaAlumn = () => {
     const [alumnosData, setAlumnosData] = useState([]);
     const [search, setSearch] = useState('');
     useEffect(() => {
-    axios.get('http://localhost:3001/api/alumnos')
+    axios.get('http://localhost:3001/api/admin/alumnos')
         .then((res) => setAlumnosData(res.data))
         .catch((err) => {
             console.error('Error al obtener alumnoes:', err);

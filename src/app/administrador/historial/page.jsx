@@ -28,7 +28,7 @@ export default function AsesoriasFinalizadas() {
   };
 
   useEffect(() => {
-    axios.get('http://localhost:3001/api/asesorias/finalizadas') // Este endpoint debe estar en tu backend
+    axios.get('http://localhost:3001/api/admin/asesorias/finalizadas') // Este endpoint debe estar en tu backend
       .then(res => {
         const datos = res.data;
         setDatosAsesores(datos);

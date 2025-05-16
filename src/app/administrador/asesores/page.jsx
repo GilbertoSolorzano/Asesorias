@@ -8,7 +8,7 @@ const TablaAsesores = () => {
     const [asesoresData, setAsesoresData] = useState([]);
     const [search, setSearch] = useState('');
     useEffect(() => {
-    axios.get('http://localhost:3001/api/asesores')
+    axios.get('http://localhost:3001/api/admin/asesores')
         .then((res) => setAsesoresData(res.data))
         .catch((err) => {
             console.error('Error al obtener asesores:', err);

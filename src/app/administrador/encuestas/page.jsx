@@ -42,7 +42,7 @@ export default function ModificarEncuestas() {
         if (!confirmacion) return;
     
         try {
-        await axios.delete(`http://localhost:3001/api/preguntas/${idPregunta}`);
+        await axios.delete(`http://localhost:3001/api/admin/preguntas/${idPregunta}`);
     
         setEncuestas(prev => ({
             ...prev,
