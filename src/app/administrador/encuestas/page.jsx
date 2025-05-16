@@ -8,7 +8,7 @@ export default function ModificarEncuestas() {
 
     // Cargar preguntas reales desde el backend
     useEffect(() => {
-        axios.get('http://localhost:3001/api/preguntas')
+        axios.get('http://localhost:3001/api/admin/preguntas')
         .then(res => setEncuestas(res.data))
         .catch(err => {
             console.error('Error al obtener preguntas:', err);
