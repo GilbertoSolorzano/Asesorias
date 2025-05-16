@@ -1,112 +1,109 @@
 'use client';
 import HamburgerMenu from "@/components/HamburgerMenu";
+import axios from 'axios';
 import { useEffect, useState } from 'react';
 
 export default function ModificarEncuestas() {
-  // Simulamos una consulta a la base de datos con un arreglo inicial
-const [encuestas, setEncuestas] = useState([]);
+    const [encuestas, setEncuestas] = useState({ alumno: [], asesor: [] });
 
-useEffect(() => {
-    // Aquí simularíamos que se traen los datos desde la base de datos
-    const datosDesdeDB = [
-    {
-        id: 1,
-        titulo: 'Encuesta satisfacción de alumnos',
-        preguntas: [
-        '¿Qué calificación le das a la asesoría del 1-10?',
-        '¿Cuántas horas tuviste de asesorías?',
-        '¿Tomarías de nuevo asesorías?'
-        ]
-    },
-    {
-        id: 2,
-        titulo: 'Encuesta satisfacción a Asesores',
-        preguntas: [
-        '¿Qué calificación le das al alumno del 1-10?',
-        '¿Cuántas horas impartiste asesorías?',
-        '¿El alumno necesita más asesorías?'
-        ]
-    }
-    ];
-    setEncuestas(datosDesdeDB);
-}, []);
+    // Cargar preguntas reales desde el backend
+    useEffect(() => {
+        axios.get('http://localhost:3001/api/preguntas')
+        .then(res => setEncuestas(res.data))
+        .catch(err => {
+            console.error('Error al obtener preguntas:', err);
+            alert('No se pudieron cargar las preguntas.');
+        });
+    }, []);
 
-const agregarPregunta = (idEncuesta) => {
-    const nuevaPregunta = prompt('Escribe la nueva pregunta:');
-    if (nuevaPregunta) {
-    setEncuestas(prev =>
-        prev.map(encuesta =>
-        encuesta.id === idEncuesta
-            ? { ...encuesta, preguntas: [...encuesta.preguntas, nuevaPregunta] }
-            : encuesta
-        )
-    );
-    }
-};
+    const agregarPregunta = async (tipoEncuesta) => {
+        const nuevaPregunta = prompt('Escribe la nueva pregunta:');
+        if (!nuevaPregunta) return;
 
-const guardarCambios = (idEncuesta) => {
-    alert(`Guardando cambios de la encuesta con ID ${idEncuesta}`);
-    // Aquí se podría hacer una petición para guardar en la base de datos
-};
+        try {
+        await axios.post('http://localhost:3001/api/preguntas', {
+            tipoEncuesta,
+            enunciado: nuevaPregunta,
+        });
 
-return (
-    <div className="flex relative">
-            {/* Sidebar */}
-            <aside className="bg-[#212227] w-20 flex flex-col items-center py-4">
-                <HamburgerMenu  role="administrador"/>
-            </aside>
-    <div className="flex-1 p-8 bg-white rounded-lg shadow-lg m-4 flex flex-col items-center">
-    <h1 className="text-3xl font-bold mb-6 text-center">Modificar encuestas</h1>
+        setEncuestas(prev => ({
+            ...prev,
+            [tipoEncuesta]: [...prev[tipoEncuesta], { enunciado: nuevaPregunta }]
+        }));
 
-    {/* Barra de búsqueda */}
-    <div className="flex items-center mb-10">
-        <input
-        type="text"
-        placeholder="Buscar"
-        className="px-4 py-2 rounded-l-full border border-gray-400 focus:outline-none"
-        />
-        <button className="bg-gray-500 text-white px-4 py-2 rounded-r-full">
-        Buscar
-        </button>
-    </div>
-
-    {/* Renderizar encuestas dinámicamente */}
-    {encuestas.map((encuesta) => (
-        <div key={encuesta.id} className="bg-white rounded-3xl shadow-md p-6 w-full max-w-2xl mb-8">
-        <h2 className="text-xl font-semibold mb-4 text-center">{encuesta.titulo}</h2>
+        alert('Pregunta agregada correctamente.');
+        } catch (error) {
+        console.error('Error al insertar pregunta:', error);
+        alert('No se pudo guardar la pregunta.');
+        }
+    };
+    const eliminarPregunta = async (idPregunta, tipo) => {
+        const confirmacion = confirm('¿Estás seguro de que deseas eliminar esta pregunta?');
+        if (!confirmacion) return;
+    
+        try {
+        await axios.delete(`http://localhost:3001/api/preguntas/${idPregunta}`);
+    
+        setEncuestas(prev => ({
+            ...prev,
+            [tipo]: prev[tipo].filter(p => p.idPregunta !== idPregunta)
+        }));
+        } catch (err) {
+        console.error('Error al eliminar la pregunta:', err);
+        alert('No se pudo eliminar la pregunta.');
+        }
+    };
+    const renderEncuesta = (tipo, titulo) => (
+        <div className="bg-white rounded-3xl shadow-md p-6 w-full max-w-2xl mb-8">
+        <h2 className="text-xl font-semibold mb-4 text-center">{titulo}</h2>
         <table className="w-full mb-4">
             <thead>
-            <tr>
-                <th className="text-left">No.</th>
-                <th className="text-left">Pregunta</th>
-            </tr>
-            </thead>
-            <tbody>
-            {encuesta.preguntas.map((pregunta, index) => (
-                <tr key={index}>
-                <td>{index + 1}</td>
-                <td>{pregunta}</td>
+                <tr>
+                    <th className="text-left">No.</th>
+                    <th className="text-left">Pregunta</th>
+                    <th className="text-right"></th>
                 </tr>
+            </thead>
+                <tbody>
+                {encuestas[tipo]?.map((pregunta, index) => (
+                    <tr key={index}>
+                        <td>{index + 1}</td>
+                        <td>{pregunta.enunciado}</td>
+                        <td className="text-right pr-2">
+                        <button
+                            onClick={() => eliminarPregunta(pregunta.idPregunta, tipo)}
+                            className="bg-red-500 px-2 py-[2px] my-[2px] rounded text-white"
+                        >
+                            Eliminar
+                        </button>
+                        </td>
+                    </tr>
             ))}
             </tbody>
         </table>
-        <div className="flex justify-between">
+        <div className="flex justify-end">
             <button
-            onClick={() => agregarPregunta(encuesta.id)}
-            className="bg-teal-400 text-white px-4 py-2 rounded"
+            onClick={() => agregarPregunta(tipo)}
+            className="bg-teal-500 text-white px-4 py-2 rounded"
             >
             Agregar Pregunta
             </button>
-            <button
-            onClick={() => guardarCambios(encuesta.id)}
-            className="bg-green-500 text-white px-4 py-2 rounded"
-            >
-            Guardar
-            </button>
         </div>
         </div>
-    ))}
+    );
+
+  return (
+    <div className="flex relative">
+      <aside className="bg-[#212227] w-20 flex flex-col items-center py-4">
+        <HamburgerMenu role="administrador" />
+      </aside>
+
+      <div className="flex-1 p-8 bg-white rounded-lg shadow-lg m-4 flex flex-col items-center">
+        <h1 className="text-3xl font-bold mb-6 text-center">Modificar encuestas</h1>
+
+        {renderEncuesta('alumno', 'Encuesta para Alumnos')}
+        {renderEncuesta('asesor', 'Encuesta para Asesores')}
+      </div>
     </div>
-    </div>
-);
+  );
 }
