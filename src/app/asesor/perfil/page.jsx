@@ -1,14 +1,37 @@
 'use client'
 import HamburgerMenu from '@/components/HamburgerMenu'
-import React, { useState } from 'react'
+import { ClientSegmentRoot } from 'next/dist/client/components/client-segment';
+import React, { useState, useEffect } from 'react'
 
 const PerfilPage = () => {
-
+  const matriculaAsesor = 'S102';
   const [selectedTags, setSelectedTags] = useState(['Fundamentos', 'Calculo I']);
   const [newPassword, setNewPassword] = useState('');
   const [options] = useState([
     'Programación', 'Matemáticas', 'POO', 'FUNDAMENTOS', 'ESTRUCTURA', 'AUTÓMATAS I'
   ]);
+  const [perfil, setPerfil] = useState({
+    nombreAsesor: '',
+    correo: '',
+    foto: '',
+    contraseñaActual: ''
+  });
+
+  useEffect(() => {
+    const fetchPerfil = async () => {
+      try {
+        const res = await fetch(`http://localhost:3001/api/asesor/asesorias/perfil-asesor?matricula=${matriculaAsesor}`);
+        if (!res.ok) throw new Error('Error al obtener perfil');
+        const data = await res.json();
+          if (data.length > 0) {
+          setPerfil(data[0]);
+        }
+      } catch (err) {
+        console.error('Error al cargar perfil:', err);
+      }
+    };
+    fetchPerfil();
+  }, [matriculaAsesor]);
 
   const removeTag = (tag) => {
     setSelectedTags(selectedTags.filter(t => t !== tag));
@@ -41,13 +64,22 @@ const PerfilPage = () => {
           {/* Nombre */}
           <div className="flex items-center">
             <label className="w-32">Nombre:</label>
-            <input type="text" className="flex-1 p-2 text-black rounded bg-[#FFFFFF]" />
+            <input 
+              type="text"
+              value={perfil.nombreAsesor  ?? ''} 
+              readOnly
+              className="flex-1 p-2 text-black rounded bg-[#FFFFFF]" 
+            />
           </div>
 
           {/* Correo */}
           <div className="flex items-center">
             <label className="w-32">Correo:</label>
-            <input type="email" className="flex-1 p-2 text-black rounded bg-[#FFFFFF]" />
+            <input 
+              type="email"
+              value={perfil.correo}
+              readOnly
+              className="flex-1 p-2 text-black rounded bg-[#FFFFFF]" />
           </div>
 
           {/* Capacitación */}
@@ -77,7 +109,11 @@ const PerfilPage = () => {
           {/* Contraseña */}
           <div className="flex items-center">
             <label className="w-32">Contraseña actual:</label>
-            <input type="password" className="flex-1 p-2 text-black rounded bg-[#FFFFFF]" />
+            <input
+              type="password"
+              value={perfil.contraseñaActual}
+              readOnly
+              className="flex-1 p-2 text-black rounded bg-[#FFFFFF]" />
           </div>
          {/* Cambiar contraseña */}
          <div className="flex items-center">
