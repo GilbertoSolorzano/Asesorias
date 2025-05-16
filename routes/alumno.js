@@ -162,4 +162,38 @@ router.put('/asesorias/:idAsesoria', (req, res) => {
   });
 });
 
+/**
+ * Listar asesorías completadas de un alumno
+ * GET /api/alumno/asesorias/completadas?matricula=XYZ
+ */
+router.get('/asesorias/completadas', (req, res) => {
+  const { matricula } = req.query;
+  if (!matricula) {
+    return res.status(400).json({ error: 'Matrícula requerida' });
+  }
+
+  const sql = `
+    SELECT
+      a.idAsesoria,
+      m.nombreMateria AS materia,
+      t.nombreTema    AS tema,
+      s.nombre        AS nombreAsesor,
+      a.fecha_acordada AS fechaAtendida
+    FROM Asesoria a
+    JOIN Tema    t ON a.idTema   = t.idTema
+    JOIN Materia m ON t.idMateria = m.idMateria
+    JOIN Asesor  s ON a.matriculaAsesor = s.matricula
+    WHERE a.matriculaAlumno = ?
+      AND a.estado = 4   -- 4 == finalizada
+  `;
+  db.query(sql, [matricula], (err, results) => {
+    if (err) {
+      console.error('Error al obtener completadas:', err);
+      return res.status(500).json({ error: 'Error del servidor' });
+    }
+    res.json(results);
+  });
+});
+
+
 module.exports = router;

@@ -58,7 +58,7 @@ export default function PerfilPage() {
   }
 
   return (
-    <div className="flex h-screen relative">
+    <div className="flex min-h-screen relative bg-gray-100">
       <aside className="bg-[#212227] w-20 flex flex-col items-center py-4">
         <HamburgerMenu role="alumno" />
       </aside>
