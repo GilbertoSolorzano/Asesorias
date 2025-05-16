@@ -36,14 +36,29 @@ router.get('/asesores', (req, res) => {
             return res.status(500).json({ error: 'Error al consultar la base de datos' });
         }
 
-        // Puedes agregar campos simulados de horas y calificación si aún no están en la tabla
         const asesoresConExtras = results.map((asesor) => ({
             ...asesor,
-            horas: Math.floor(Math.random() * 100), // Ejemplo temporal
-            calificacion: Math.floor(Math.random() * 4) + 7 // entre 7 y 10
+            horas:0,            // Math.floor(Math.random() * 100), // Ejemplo temporal
+            calificacion: 0     //Math.floor(Math.random() * 4) + 7 // entre 7 y 10
         }));
 
         res.json(asesoresConExtras);
+    });
+});
+router.post('/asesores', (req, res) => {
+    const { matricula, nombre, email, password } = req.body;
+
+    if (!matricula || !nombre || !email || !password) {
+        return res.status(400).json({ error: 'Faltan campos requeridos' });
+    } 
+    const sql = 'INSERT INTO Asesor (matricula, nombre, email, password) VALUES (?, ?, ?, ?)';
+    db.query(sql, [matricula, nombre, email, password], (err, result) => {
+        if (err) {
+            console.error('Error al insertar asesor:', err);
+            return res.status(500).json({ error: 'Error al insertar el asesor' });
+        }
+    
+        res.status(201).json({ message: 'Pregunta insertada correctamente', idPregunta: result.insertId });
     });
 });
 router.get('/alumnos', (req, res) => {

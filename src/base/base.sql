@@ -134,7 +134,6 @@ CREATE TABLE PreguntaEncuesta (
     idPregunta INT AUTO_INCREMENT PRIMARY KEY,
     tipoEncuesta ENUM('alumno', 'asesor') NOT NULL,
     enunciado TEXT NOT NULL,
-    orden INT  -- para definir el orden de las preguntas
 ) ENGINE = InnoDB;
 
 -- Tabla RespuestaEncuesta:
