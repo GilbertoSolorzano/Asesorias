@@ -195,5 +195,57 @@ router.get('/asesorias/completadas', (req, res) => {
   });
 });
 
+// Listar todas las materias con material de apoyo disponible
+// GET /api/alumno/materiales/materias
+router.get('/materiales/materias', (req, res) => {
+  const sql = `
+    SELECT DISTINCT m.idMateria, m.nombreMateria
+    FROM MaterialApoyo ma
+    JOIN Materia m ON ma.idMateria = m.idMateria
+  `;
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error('Error al obtener materias:', err);
+      return res.status(500).json({ error: 'Error del servidor' });
+    }
+    res.json(results);
+  });
+});
+
+// Listar materiales de apoyo por materia y opcionalmente por tipo
+// GET /api/alumno/materiales?materia=ID&tipo=pdf|video
+router.get('/materiales', (req, res) => {
+  const { materia, tipo } = req.query;
+  if (!materia) {
+    return res.status(400).json({ error: 'idMateria es requerido' });
+  }
+
+  let sql = `
+    SELECT 
+      idMaterial,
+      titulo,
+      contenido,
+      descripcion
+    FROM MaterialApoyo
+    WHERE idMateria = ?
+  `;
+  const params = [materia];
+
+  // Filtrado por tipo: asumimos que "pdf" busca ".pdf" y "video" el resto (URLs)
+  if (tipo === 'pdf') {
+    sql += " AND contenido LIKE '%.pdf'";
+  } else if (tipo === 'video') {
+    sql += " AND contenido NOT LIKE '%.pdf'";
+  }
+
+  db.query(sql, params, (err, results) => {
+    if (err) {
+      console.error('Error al obtener materiales:', err);
+      return res.status(500).json({ error: 'Error del servidor' });
+    }
+    res.json(results);
+  });
+});
+
 
 module.exports = router;

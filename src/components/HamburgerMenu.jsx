@@ -9,7 +9,7 @@ export default function HamburgerMenu({role}) {
   const menuOptions = {
     alumno: [
       {label: "Inicio", path: "/alumno"},
-      {label: "Asesorías realizadas", path: "/alumno/historial"},
+      {label: "Historial de Asesorias", path: "/alumno/historial"},
       {label: "Material de apoyo", path: "/alumno/material"},
       {label: "Perfil", path: "/alumno/perfil"}
     ],
