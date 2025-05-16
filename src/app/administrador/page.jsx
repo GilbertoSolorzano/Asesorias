@@ -54,6 +54,10 @@ const DashboardAdministrador = () => {
                 {/* Tarjetas dinámicas */}
                 <div className="space-y-6">
                 {asesorias.filter(asesoria => asesoria.estado !== 4)
+                .sort((a, b) => {
+                    const ordenDeseado = [2, 1, 3]; // Personaliza el orden aquí
+                    return ordenDeseado.indexOf(a.estado) - ordenDeseado.indexOf(b.estado);
+                })
                 .map((asesoria) => (
                     <div
                         key={asesoria.idAsesoria}
