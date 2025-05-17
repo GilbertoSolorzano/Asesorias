@@ -8,34 +8,40 @@ import AsesorCardPending from "@/components/AsesorCardPending";
 
 export default function HomePage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [asesoriaEditando, setAsesoriaEditando] = useState(null);
   const [matricula, setMatricula] = useState(null);
   const [pendientes, setPendientes] = useState([]);
 
-  // 1) Leer matrícula al montar
   useEffect(() => {
     const m = localStorage.getItem("matricula");
     setMatricula(m);
   }, []);
 
-  // 2) Cargar solicitudes pendientes
-  useEffect(() => {
+  const cargarPendientes = () => {
     if (!matricula) return;
     fetch(`http://localhost:3001/api/alumno/asesorias?matricula=${matricula}`)
       .then((res) => res.json())
       .then((all) => {
-        // filtrar por este alumno y estado === 1 (pendiente)
         const filt = all.filter(
           (a) => a.matriculaAlumno === matricula && a.estado === 1
         );
         setPendientes(filt);
       })
       .catch(console.error);
+  };
+
+  useEffect(() => {
+    cargarPendientes();
   }, [matricula]);
 
   const handleModificar = (id) => {
-    // redirigir o abrir modal para modificar, p.e.:
-    console.log("Modificar", id);
+    const asesoria = pendientes.find((a) => a.idAsesoria === id);
+    setAsesoriaEditando(asesoria);
+    setIsEditMode(true);
+    setIsModalOpen(true);
   };
+
   const handleEliminar = async (id) => {
     if (!confirm("¿Seguro que quieres eliminar esta solicitud?")) return;
     try {
@@ -51,6 +57,13 @@ export default function HomePage() {
     } catch {
       alert("Error de red");
     }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setIsEditMode(false);
+    setAsesoriaEditando(null);
+    cargarPendientes();
   };
 
   return (
@@ -75,8 +88,8 @@ export default function HomePage() {
               {pendientes.map((a) => (
                 <AsesorCardPending
                   key={a.idAsesoria}
-                   materia={a.nombreMateria}
-                   tema={a.nombreTema}
+                  materia={a.nombreMateria}
+                  tema={a.nombreTema}
                   status="Pendiente"
                   onModificar={() => handleModificar(a.idAsesoria)}
                   onEliminar={() => handleEliminar(a.idAsesoria)}
@@ -89,7 +102,11 @@ export default function HomePage() {
         <main className="grid grid-cols-3 gap-8">
           <div
             className="flex flex-col items-center justify-center border-2 border-dashed border-blue-300 rounded-md p-4 hover:bg-blue-50 cursor-pointer"
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => {
+              setIsEditMode(false);
+              setAsesoriaEditando(null);
+              setIsModalOpen(true);
+            }}
           >
             <p className="text-gray-500 text-sm mb-2">CREAR SOLICITUD</p>
             <div className="bg-gray-200 rounded-full w-16 h-16 mx-auto flex items-center justify-center">
@@ -101,8 +118,10 @@ export default function HomePage() {
         {isModalOpen && (
           <div className="absolute top-0.5 left-1/4 w-1/2 z-50">
             <CrearAsesoriaModal
-              onClose={() => setIsModalOpen(false)}
+              onClose={handleCloseModal}
               matriculaAlumno={matricula}
+              modoEdicion={isEditMode}
+              asesoriaInicial={asesoriaEditando}
             />
           </div>
         )}
