@@ -5,6 +5,8 @@ import { useState, useEffect } from "react";
 import HamburgerMenu from "@/components/HamburgerMenu";
 import CrearAsesoriaModal from "@/components/CrearAsesoriaModal";
 import AsesorCardPending from "@/components/AsesorCardPending";
+import { CirclePlus } from "lucide-react";
+
 
 export default function HomePage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -73,11 +75,25 @@ export default function HomePage() {
       </aside>
 
       <div className="flex-1 bg-gray-100 p-8 relative">
-        <header className="text-center mb-8">
-          <h5 className="text-2xl font-bold text-zinc-950">
-            Bienvenido, Alumno
-          </h5>
-        </header>
+        <header className="mb-8 flex items-center px-4">
+        {/* El título ocupa todo el espacio disponible y está centrado */}
+        <h5 className="flex-1 text-center text-2xl font-bold text-zinc-950">
+          Bienvenido, Alumno
+        </h5>
+        <div
+          onClick={() => {
+              setIsEditMode(false);
+              setAsesoriaEditando(null);
+              setIsModalOpen(true);
+            }}
+          className="flex flex-col items-center mr-4 mt-4 cursor-pointer"
+        >
+          <CirclePlus className="w-10 h-10 text-blue-500" />
+          <span className="text-sm text-gray-600 mt-1">
+            Agregar solicitud
+          </span>
+        </div>
+      </header>
 
         <section className="mb-8">
           <h2 className="text-xl font-semibold mb-4">Solicitudes Pendientes</h2>
@@ -98,22 +114,6 @@ export default function HomePage() {
             </div>
           )}
         </section>
-
-        <main className="grid grid-cols-3 gap-8">
-          <div
-            className="flex flex-col items-center justify-center border-2 border-dashed border-blue-300 rounded-md p-4 hover:bg-blue-50 cursor-pointer"
-            onClick={() => {
-              setIsEditMode(false);
-              setAsesoriaEditando(null);
-              setIsModalOpen(true);
-            }}
-          >
-            <p className="text-gray-500 text-sm mb-2">CREAR SOLICITUD</p>
-            <div className="bg-gray-200 rounded-full w-16 h-16 mx-auto flex items-center justify-center">
-              <span className="text-gray-600 text-2xl font-bold">+</span>
-            </div>
-          </div>
-        </main>
 
         {isModalOpen && (
           <div className="absolute top-0.5 left-1/4 w-1/2 z-50">
