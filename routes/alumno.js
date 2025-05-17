@@ -247,5 +247,21 @@ router.get('/materiales', (req, res) => {
   });
 });
 
+router.delete('/asesorias/:idAsesoria', (req, res) => {
+  const { idAsesoria } = req.params;
+
+  const sql = 'DELETE FROM Asesoria WHERE idAsesoria = ?';
+  db.query(sql, [idAsesoria], (err, result) => {
+    if (err) {
+      console.error('Error al eliminar asesoría:', err);
+      return res.status(500).json({ error: 'Error al eliminar asesoría' });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Asesoría no encontrada' });
+    }
+    res.json({ message: 'Asesoría eliminada' });
+  });
+});
+
 
 module.exports = router;
