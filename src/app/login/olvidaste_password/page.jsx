@@ -1,33 +1,26 @@
-'use client'
+'use client';
 import React, { useState } from 'react';
 
-const ForgotPasswordPage = () => {
+export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
   const [confirmEmail, setConfirmEmail] = useState('');
   const [message, setMessage] = useState('');
 
   const handleVerifyClick = async () => {
     if (email !== confirmEmail) {
-      alert('Los correos electrónicos no coinciden.');
-      return;
+      return alert('Los correos no coinciden');
     }
-
     try {
-      const res = await fetch('/api/reset-request', {
+      const res = await fetch('/api/auth/forgot-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ correo: email }),
+        body: JSON.stringify({ correo: email })
       });
-
       const data = await res.json();
-
-      if (res.ok) {
-        setMessage(`Enlace enviado: ${data.resetUrl}`);
-      } else {
-        alert(data.message);
-      }
-    } catch (error) {
-      alert('Error al procesar la solicitud');
+      if (!res.ok) return alert(data.message);
+      setMessage(data.message);
+    } catch {
+      alert('Error de red');
     }
   };
 
@@ -49,13 +42,14 @@ const ForgotPasswordPage = () => {
           placeholder="Repite tu correo"
           className="mb-6 w-full px-4 py-2 border rounded"
         />
-        <button onClick={handleVerifyClick} className="bg-green-600 text-white px-4 py-2 rounded">
-          Verificar
+        <button
+          onClick={handleVerifyClick}
+          className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
+        >
+          Enviar enlace
         </button>
-        {message && <p className="mt-4 text-green-700 font-bold">{message}</p>}
+        {message && <p className="mt-4 text-green-700">{message}</p>}
       </div>
     </div>
   );
-};
-
-export default ForgotPasswordPage;
+}

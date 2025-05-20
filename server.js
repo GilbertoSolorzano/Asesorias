@@ -14,6 +14,7 @@ const loginRoutes = require('./routes/login');
 const adminRoutes = require('./routes/admin');
 const alumnosRoutes = require('./routes/alumno');
 const asesorRoutes = require('./routes/asesor');
+const authRoutes = require('./routes/auth');
 // const preguntasRoutes = require('./routes/preguntas');
 
 // Usar rutas
@@ -21,6 +22,7 @@ app.use('/api', loginRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/asesor', asesorRoutes);
 app.use('/api/alumno', alumnosRoutes);
+app.use('/api/auth', authRoutes);
 
 
 // Iniciar servidor
