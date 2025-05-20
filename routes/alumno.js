@@ -245,7 +245,6 @@ router.delete('/asesorias/:idAsesoria', (req, res) => {
 /**
  * POST /api/alumno/register
  * Recibe: { matricula, nombre, carrera, correoInstitucional, password }
- * Almacena contraseña en texto plano.
  */
 router.post('/register', (req, res) => {
   const { matricula, nombre, carrera, correoInstitucional, password } = req.body;
