@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import HamburgerMenu from "@/components/HamburgerMenu";
 import CrearAsesoriaModal from "@/components/CrearAsesoriaModal";
 import AsesorCardPending from "@/components/AsesorCardPending";
+import ChatWidget from "@/components/ChatWidget";
 import { CirclePlus } from "lucide-react";
 
 
@@ -68,6 +69,11 @@ export default function HomePage() {
     cargarPendientes();
   };
 
+  useEffect(() => {
+   // Si hay alguna asesoría pendiente, abrimos chat con la primera
+    if (pendientes.length) setChatRoom(pendientes[0].idAsesoria);
+  }, [pendientes])
+
   return (
     <div className="flex min-h-screen relative bg-gray-100">
       <aside className="bg-[#212227] w-20 flex flex-col items-center py-4">
@@ -126,6 +132,9 @@ export default function HomePage() {
           </div>
         )}
       </div>
+      {chatRoom && (
+        <ChatWidget room={chatRoom} user={matricula} />
+      )}
     </div>
   );
 }

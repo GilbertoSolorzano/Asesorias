@@ -275,4 +275,28 @@ router.post('/register', (req, res) => {
   });
 });
 
+/**
+ * Historial de mensajes de una asesoría
+ * GET /api/alumno/mensajes/:idAsesoria
+ */
+router.get('/mensajes/:idAsesoria', async (req, res) => {
+  const { idAsesoria } = req.params;
+  try {
+    const [rows] = await db.promise().query(
+      `SELECT 
+         matriculaRemitente AS remitente,
+         mensaje           AS texto,
+         horaMensaje       AS timestamp
+       FROM Mensaje
+       WHERE idAsesoria = ?
+       ORDER BY horaMensaje`,
+      [idAsesoria]
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error('Error al obtener mensajes:', err);
+    res.status(500).json({ error: 'Error del servidor' });
+  }
+});
+
 module.exports = router;
