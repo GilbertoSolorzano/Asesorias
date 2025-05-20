@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 export default function ResetPasswordPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const token = searchParams.get('token');         // lee ?token=...
+  const token = searchParams.get('token');        
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirm] = useState('');
 
@@ -24,7 +24,7 @@ export default function ResetPasswordPage() {
         return alert(data.message);
       }
       alert('Contraseña restablecida correctamente.');
-      router.push('/login');
+      router.push('/');
     } catch (e) {
       console.error(e);
       alert('Error de red');
