@@ -279,23 +279,30 @@ router.post('/register', (req, res) => {
  * Historial de mensajes de una asesoría
  * GET /api/alumno/mensajes/:idAsesoria
  */
+// GET /api/mensajes/:idAsesoria
 router.get('/mensajes/:idAsesoria', async (req, res) => {
   const { idAsesoria } = req.params;
+
   try {
     const [rows] = await db.promise().query(
-      `SELECT 
-         matriculaRemitente AS remitente,
-         mensaje           AS texto,
-         horaMensaje       AS timestamp
+      `SELECT matriculaRemitente AS remitente, mensaje AS texto, horaMensaje AS timestamp
        FROM Mensaje
        WHERE idAsesoria = ?
-       ORDER BY horaMensaje`,
+       ORDER BY horaMensaje ASC`,
       [idAsesoria]
     );
-    res.json(rows);
-  } catch (err) {
-    console.error('Error al obtener mensajes:', err);
-    res.status(500).json({ error: 'Error del servidor' });
+
+    // Validar que sea un array válido
+    if (!Array.isArray(rows)) {
+      return res.status(500).json({ error: 'La respuesta no es una lista de mensajes' });
+    }
+
+    // Forzar el encabezado de tipo de contenido
+    res.setHeader("Content-Type", "application/json");
+    res.status(200).json(rows);
+  } catch (error) {
+    console.error('Error al obtener mensajes:', error);
+    res.status(500).json({ error: 'Error al cargar mensajes' });
   }
 });
 

@@ -3,15 +3,15 @@
 export default function AsesorCardPending({ materia, tema, status, onModificar, onEliminar }) {
   return (
     <div className="border rounded-lg p-4 bg-yellow-50 shadow-md">
-      <h3 className="text-lg font-bold">Solicitud Pendiente</h3>
-      <p>
+      <h3 className="text-lg font-bold text-black">Solicitud Pendiente</h3>
+      <p className=" text-black">
         <strong>Materia:</strong> {materia}
       </p>
 
-      <p>
+      <p className=" text-black">
         <strong>Tema:</strong> {tema}
       </p>
-      <p>
+      <p className=" text-black">
         <strong>Status:</strong> {status}
       </p>
       <div className="mt-2 flex space-x-2">
