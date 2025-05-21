@@ -1,57 +1,71 @@
 import React, { useState, useEffect } from 'react';
 
-export default function CrearAsesoriaModal({ onClose, matriculaAlumno }) {
+export default function CrearAsesoriaModal({ onClose, matriculaAlumno, modoEdicion = false, asesoriaInicial = null }) {
   const [materias, setMaterias] = useState([]);
   const [temas, setTemas] = useState([]);
   const [materiaId, setMateriaId] = useState('');
   const [temaId, setTemaId] = useState('');
   const [lugar, setLugar] = useState('Presencial');
-  const [nivelUrgencia, setNivelUrgencia] = useState('');
 
   // Carga materias
   useEffect(() => {
     fetch('http://localhost:3001/api/alumno/materias')
-      .then(res => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
-      })
-      .then(data => setMaterias(data))
-      .catch(err => console.error('Error cargando materias:', err));
+      .then((r) => r.json())
+      .then(setMaterias)
+      .catch(console.error);
   }, []);
-
 
   // Carga temas según materia
   useEffect(() => {
-    if (!materiaId) return setTemas([]);
+    if (!materiaId) {
+      setTemas([]);
+      return;
+    }
     fetch(`http://localhost:3001/api/alumno/temas/${materiaId}`)
       .then((r) => r.json())
       .then(setTemas)
       .catch(console.error);
   }, [materiaId]);
 
+  // Si es edición, precargar datos
+  useEffect(() => {
+    if (modoEdicion && asesoriaInicial) {
+      setMateriaId(asesoriaInicial.idMateria || '');
+      setTemaId(asesoriaInicial.idTema);
+      setLugar(asesoriaInicial.lugar || 'Presencial');
+    }
+  }, [modoEdicion, asesoriaInicial]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Si no tenemos matrícula, abortamos
-    if (!matriculaAlumno) {
-      alert('Debe iniciar sesión para crear una solicitud');
+    if (!temaId) {
+      alert('Selecciona un tema');
       return;
     }
 
-    const payload = {
-      matriculaAlumno, // ahora sí la estamos enviando
-      idTema: temaId,
-      lugar,
-      nivelUrgencia: nivelUrgencia || null,
-      // NO enviamos fecha_creacion ni estado: el backend las asigna
-    };
+    const payload = { idTema: temaId, lugar };
 
     try {
-      const res = await fetch('http://localhost:3001/api/alumno/asesorias', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+      let res;
+      if (modoEdicion && asesoriaInicial?.idAsesoria) {
+        // Editar
+        res = await fetch(
+          `http://localhost:3001/api/alumno/asesorias/${asesoriaInicial.idAsesoria}`,
+          {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          }
+        );
+      } else {
+        // Crear
+        res = await fetch('http://localhost:3001/api/alumno/asesorias', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...payload, matriculaAlumno }),
+        });
+      }
 
       if (!res.ok) {
         const err = await res.json();
@@ -59,13 +73,14 @@ export default function CrearAsesoriaModal({ onClose, matriculaAlumno }) {
         return;
       }
 
-      alert('Solicitud creada con éxito');
-      // limpiar
-      setMateriaId('');
-      setTemaId('');
-      setLugar('Presencial');
-      setNivelUrgencia('');
-      setTemas([]);
+      alert(modoEdicion ? 'Solicitud actualizada' : 'Solicitud creada');
+      // Limpiar solo en creación
+      if (!modoEdicion) {
+        setMateriaId('');
+        setTemaId('');
+        setLugar('Presencial');
+        setTemas([]);
+      }
       onClose();
     } catch (err) {
       console.error(err);
@@ -82,7 +97,7 @@ export default function CrearAsesoriaModal({ onClose, matriculaAlumno }) {
         ✖
       </button>
       <h2 className="text-xl font-bold mb-4 text-white text-center">
-        Crear Solicitud
+        {modoEdicion ? 'Modificar Solicitud' : 'Crear Solicitud'}
       </h2>
       <form className="space-y-4" onSubmit={handleSubmit}>
         <div>
@@ -103,9 +118,7 @@ export default function CrearAsesoriaModal({ onClose, matriculaAlumno }) {
         </div>
 
         <div>
-          <label className="block text-white font-semibold">
-            Tema de interés:
-          </label>
+          <label className="block text-white font-semibold">Tema de interés:</label>
           <select
             className="w-full p-2 border rounded"
             value={temaId}
@@ -149,7 +162,7 @@ export default function CrearAsesoriaModal({ onClose, matriculaAlumno }) {
           type="submit"
           className="bg-white text-blue-500 w-full p-2 rounded hover:bg-gray-200"
         >
-          Enviar
+          {modoEdicion ? 'Guardar Cambios' : 'Enviar'}
         </button>
       </form>
     </div>

@@ -9,7 +9,7 @@ export default function HamburgerMenu({role}) {
   const menuOptions = {
     alumno: [
       {label: "Inicio", path: "/alumno"},
-      {label: "Asesorías realizadas", path: "/alumno/historial"},
+      {label: "Historial de Asesorias", path: "/alumno/historial"},
       {label: "Material de apoyo", path: "/alumno/material"},
       {label: "Perfil", path: "/alumno/perfil"}
     ],
@@ -71,7 +71,9 @@ export default function HamburgerMenu({role}) {
                 </Link>
               ))}
               {/* Botón de cerrar sesión */}
-              <button
+              <Link
+              key="/"
+              href="/"
                 onClick={() => {
                   alert("Cerrando sesión...");
                   setIsOpen(false);
@@ -79,7 +81,7 @@ export default function HamburgerMenu({role}) {
                 className="block w-full text-center px-4 py-2 text-red-600  hover:bg-white hover:text-red-600 rounded-l-2xl"
               >
                 Cerrar Sesión
-              </button>
+              </Link>
             </nav>
           </div>
         </div>
