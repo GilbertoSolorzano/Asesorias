@@ -305,5 +305,17 @@ router.get('/mensajes/:idAsesoria', async (req, res) => {
     res.status(500).json({ error: 'Error al cargar mensajes' });
   }
 });
+// GET /api/alumno/carreras
+router.get('/carreras', (req, res) => {
+  const sql = 'SELECT idCarrera, nombreCarrera AS nombre FROM Carrera';
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error('Error al obtener carreras:', err);
+      return res.status(500).json({ error: 'Error al consultar carreras' });
+    }
+    res.json(results);
+  });
+});
+
 
 module.exports = router;
