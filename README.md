@@ -14,79 +14,33 @@ Un sistema de asesorías desarrollado en React (.jsx) que permite gestionar, pro
 
 ## Características
 
-- **Gestión de Usuarios:** Registro e inicio de sesión para alumnos, asesores y administradores.
-- **Perfil de Usuario:** Administración de perfiles, incluyendo fotografía (almacenada o referenciada a través de URL).
-- **Gestión de Materias y Temas:** Cada materia cuenta con varios temas para especificar áreas de consulta.
-- **Agenda de Asesorías:** Sistema para reservar y programar sesiones de asesoría, asignando asesores automáticamente o de manera manual.
-- **Chat en Tiempo Real:** Intercambio de mensajes en un chat integrado por cada sesión de asesoría, con validación de remitentes.
+- **Gestión de Usuarios:** Registro e inicio de sesión para alumnos, asesores y administradores.  
+- **Perfil de Usuario:** Administración de perfiles, incluyendo fotografía (almacenada o referenciada a través de URL).  
+- **Gestión de Materias y Temas:** Cada materia cuenta con varios temas para especificar áreas de consulta.  
+- **Agenda de Asesorías:** Sistema para reservar y programar sesiones de asesoría, asignando asesores automáticamente o de manera manual.  
+- **Chat en Tiempo Real:** Intercambio de mensajes en un chat integrado por cada sesión de asesoría, con validación de remitentes.  
 - **Historial y Reportes:** Registro del historial de asesorías, con posibilidad de generar reportes y estadísticas de uso.
 
 ## Tecnologías Utilizadas
 
-- **React:** La librería principal para la construcción de interfaces de usuario en .jsx.
-- **React Router:** Para la navegación y rutas dentro de la aplicación.
-- **Redux (o Context API):** Gestión del estado global de la aplicación.
-- **Socket.io (o similar):** Comunicación en tiempo real para el chat de asesorías.
-- **Axios / Fetch API:** Para consumir la API RESTful que gestiona la lógica del backend.
-- **CSS / SASS / Styled Components:** Estilizado de componentes y maquetación responsiva.
-- **Node.js & Express:** (Opcional) Para el backend que administra la lógica de negocio y comunicación con la base de datos.
+- **React:** La librería principal para la construcción de interfaces de usuario en .jsx.  
+- **React Router:** Para la navegación y rutas dentro de la aplicación.  
+- **Redux (o Context API):** Gestión del estado global de la aplicación.  
+- **Socket.io (o similar):** Comunicación en tiempo real para el chat de asesorías.  
+- **Axios / Fetch API:** Para consumir la API RESTful que gestiona la lógica del backend.  
+- **CSS / SASS / Styled Components:** Estilizado de componentes y maquetación responsiva.  
+- **Node.js & Express:** (Opcional) Para el backend que administra la lógica de negocio y comunicación con la base de datos.  
 - **Base de datos SQL (MariaDB/MySQL):** Para almacenar datos de usuarios, materias, temas, asesorías y mensajes.
 
 ## Instalación
 
 ### Requisitos Previos
 
-- **Node.js** (versión recomendada 14 o superior)
+- **Node.js** (versión recomendada 14 o superior)  
+- **npm** o **yarn**
 
 ### Clonar el Repositorio
 
 ```bash
-git clone https://github.com/GilbertoSolorzano/Asesorias.git
-cd asesorias
-```
-
-### Instalar Dependencias
-
-```bash
-# Frontend
-npm install react react-dom next
-npm install axios
-npm install @heroicons/react lucide-react
-npm install chart.js react-chartjs-2
-npm install tailwindcss @tailwindcss/postcss
-npm install chart.js react-chartjs-2
-
-# Backend
-npm install express
-npm install cors
-npm install body-parser
-npm install dotenv
-npm install mysql2
-npm install nodemailer
-npm install dotenv
-Npm install socket.io
-Npm install socket.io-client
-
-```
-
-### Pasos
-
-## Integrantes
-
-#### Acosta Leon Bryan
-
-#### Flores Hernandez Roberto David
-
-#### Heredia Andrey Victor Felipe
-
-#### Solorzano Galvez Gilberto Jesus
-
-## Documentos del Proycto
-
-### Diseño Detallado
-
-#### Link
-
-### Manual de Usuarios
-
-#### Link
+git clone https://github.com/tuusuario/sistema-asesorias.git
+cd sistema-asesorias
