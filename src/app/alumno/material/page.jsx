@@ -1,5 +1,4 @@
 "use client";
-import CrearMaterial from "@/components/CrearMaterialApoyo";
 import HamburgerMenu from "@/components/HamburgerMenu";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -35,7 +34,7 @@ export default function HomePage() {
     <div className="flex min-h-screen relative">
       {/* Sidebar */}
       <aside className="bg-[#212227] w-20 flex flex-col items-center py-4">
-        <HamburgerMenu role="administrador" />
+        <HamburgerMenu role="alumno" />
       </aside>
 
       {/* Contenedor principal */}
