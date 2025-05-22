@@ -5,13 +5,19 @@ import HamburgerMenu from '@/components/HamburgerMenu'
 import React, { useEffect, useState } from 'react'
 
 const HistorialPage = () => {
-  const matriculaAsesor = 'S102';
+  const [matricula, setMatricula] = useState(null);
   const [asesoriaTerminada, setAsesoriaTerminada] = useState([])
+
+  // Leer la matricula del localStorage
+  useEffect(() => {
+    const m = localStorage.getItem('matricula');
+    setMatricula(m);
+  }, []);
 
   useEffect(() => {
     const fetchAsesorias = async () => {
         try {
-            const res = await fetch(`http://localhost:3001/api/asesor/asesorias/asesorias-finalizadas?matricula=${matriculaAsesor}`);
+            const res = await fetch(`http://localhost:3001/api/asesor/asesorias/asesorias-finalizadas?matricula=${matricula}`);
             if (!res.ok) {
                 throw new Error(`Error al cargar asesorías finalizadas: ${res.status} - ${res.statusText}`);
             }
@@ -23,7 +29,7 @@ const HistorialPage = () => {
     };
 
     fetchAsesorias();
-}, [matriculaAsesor]);
+}, [matricula]);
   return (
     <div className="flex flex-col md:flex-row h-screen">
       <aside className="bg-[#212227] w-full md:w-20 flex flex-col items-center py-4 md:h-full min-h-[60px]">
@@ -32,7 +38,7 @@ const HistorialPage = () => {
   
       <main className="flex-1 overflow-y-auto flex-col items-center bg-white w-full h-full">
         <div className="w-full h-64 sm:h-80 md:h-96 mb-6 flex items-center justify-center">
-          <AsesorDataGraph />
+          <AsesorDataGraph matricula={matricula} />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 w-full justify-center gap-4 p-4 overflow-y-auto">
           {asesoriaTerminada.map( (at, index) => (
