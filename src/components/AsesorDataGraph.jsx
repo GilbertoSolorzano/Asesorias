@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -14,20 +14,38 @@ import { Bar } from 'react-chartjs-2'
 // Registrar lo necesario
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
-const AsesorDataGraph = () => {
-    const data = {
-        labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio"],
-        datasets: [
-            {
-                label:"Horas de asesorías",
-                data:[5, 3, 6, 4, 5, 3],
-                backgroundColor:'#66D575',
-                borderColor:'rgba(34,197,94,1)',
-                borderWidth: 1,
-                borderRadius: 6,
-            },
-        ],
-    }
+const AsesorDataGraph = ({matricula: matriculaAsesor}) => {
+    const [data, setData] = useState(null);
+
+    useEffect(() => {
+        const fetchGraphData = async () =>{
+            try {
+                const res = await fetch(`http://localhost:3001/api/asesor/graficar-asesorias?matricula=${matriculaAsesor}`);
+                const rawData = await res.json();
+
+                const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+                const labels = rawData.map(d => `${meses[d.mes - 1]} ${d.anio}`);
+                const values = rawData.map(d => d.total_asesorias);
+
+                setData({
+                    labels,
+                    datasets: [
+                        {
+                        label: 'Asesorías finalizadas',
+                        data: values,
+                        backgroundColor: '#66D575',
+                        borderColor: 'rgba(34,197,94,1)',
+                        borderWidth: 1,
+                        borderRadius: 6,
+                        },
+                    ],
+                })
+            } catch (err) {
+                console.error('Error al obtener los datos del gráfico:', err)
+            }
+        }
+        fetchGraphData()
+    }, [matriculaAsesor])
 
     const barOptions = {
         responsive: true,
@@ -64,7 +82,7 @@ const AsesorDataGraph = () => {
         </h2>
         <div className="relative w-full h-64 sm:h-80 md:h-96 lg:h-80 xl:h-96">
             <div className="w-full h-full bg-blue-200 rounded-md p-4 mb-6 flex items-center justify-center">
-                <Bar data={data} options={barOptions} />
+                {data ? <Bar data={data} options={barOptions} /> : <p>Cargando gráfico...</p>}
             </div>
         </div>
     </div>
