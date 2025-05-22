@@ -9,8 +9,7 @@ import ChatWidget from '@/components/ChatWidget';
 import { useEffect, useState } from 'react';
 
 const AsesorPage = () => {
-  const matriculaAsesor = 'S102';
-
+  const [matricula, setMatricula] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFinalizarModalOpen, setIsFinalizarModalOpen] = useState(false);
   const [asesorias, setAsesorias] = useState([]);
@@ -18,17 +17,22 @@ const AsesorPage = () => {
   const [solicitudes, setSolicitudes] = useState([]);
   const [chatRoom, setChatRoom] = useState(null);
 
-  const eliminarSolicitud = (id) => {
-    setSolicitudes((prev) => prev.filter((s) => s.id !== id));
-  };
-
+  // Leer la matricula del localStorage
   useEffect(() => {
+    const m = localStorage.getItem('matricula');
+    setMatricula(m);
+  }, []);
+
+  //Fetch de las solicitudes
+  useEffect(() => {
+    if (!matricula) return; 
     const fetchSolicitudes = async () => {
       try {
-        const res = await fetch(`http://localhost:3001/api/asesor/asesorias/solicitud?matricula=${matriculaAsesor}`);
+        const res = await fetch(`http://localhost:3001/api/asesor/asesorias/solicitud?matricula=${matricula}`);
         if (!res.ok) throw new Error(`Error al cargar solicitudes: ${res.status}`);
         const data = await res.json();
         const mSolicitudes = data.map((sol) => ({
+          idAsesoria: sol.id,
           materia: sol.tema,
           nombre: sol.nombreAlumno,
           notas: sol.notas
@@ -39,12 +43,13 @@ const AsesorPage = () => {
       }
     };
     fetchSolicitudes();
-  }, [matriculaAsesor]);
+  }, [matricula]);
 
+  //Fetch de las asesorias activas
   useEffect(() => {
     const fetchAsesorias = async () => {
       try {
-        const res = await fetch(`http://localhost:3001/api/asesor/asesorias/activas?matricula=${matriculaAsesor}`);
+        const res = await fetch(`http://localhost:3001/api/asesor/asesorias/activas?matricula=${matricula}`);
         if (!res.ok) throw new Error(`Error al cargar asesorías: ${res.status}`);
         const data = await res.json();
         setAsesorias(data);
@@ -53,8 +58,9 @@ const AsesorPage = () => {
       }
     };
     fetchAsesorias();
-  }, [matriculaAsesor]);
+  }, [matricula]);
 
+  //Fetch de las asesorias finalizadas
   const finalizarAsesoria = async () => {
     if (!asesoriaSeleccionada) return;
 
@@ -135,7 +141,34 @@ const AsesorPage = () => {
             <SolicitudCard
               onClose={() => setIsModalOpen(false)}
               solicitudes={solicitudes}
-              onAceptar={eliminarSolicitud}
+              onAceptar={async (idAsesoria) =>{
+                try {
+                  const res = await fetch('http://localhost:3001/api/asesor/asesorias/aceptar-asesoria', {
+                    method:'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ idAsesoria }),
+                  });
+                  
+                  if (!res.ok) throw new Error('No se pudo aceptar la asesoría');
+                  const result = await res.json();
+                  console.log(result)
+                  alert('Asesoría aceptada correctamente');
+
+                  //Actualizar solicitudes
+                  setSolicitudes(prev => prev.filter(s => s.idAsesoria !== idAsesoria));
+                  //Actualizar asesorias activas
+                  const asesoriasRes = await fetch(`http://localhost:3001/api/asesor/asesorias/activas?matricula=${matricula}`);
+                  const asesoriasData = await asesoriasRes.json();
+                  setAsesorias(asesoriasData);
+
+                  setIsModalOpen(false);
+                }catch (err) {
+                  console.error('Error al aceptar asesoría:', err);
+                  alert('Ocurrió un error al aceptar la asesoría');
+                }
+              }}
             />
           </div>
         )}
@@ -151,7 +184,7 @@ const AsesorPage = () => {
 
       {/* Chat */}
       {chatRoom && (
-        <ChatWidget room={chatRoom} user={matriculaAsesor} />
+        <ChatWidget room={chatRoom} user={matricula} />
       )}
     </div>
   );
