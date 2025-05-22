@@ -16,7 +16,7 @@ const AsesorPage = () => {
   const [asesoriaSeleccionada, setAsesoriaSeleccionada] = useState(null);
   const [solicitudes, setSolicitudes] = useState([]);
   const [chatRoom, setChatRoom] = useState(null);
-
+  const [chatMessages, setChatMessages] = useState([]);
   // Leer la matricula del localStorage
   useEffect(() => {
     const m = localStorage.getItem('matricula');
@@ -80,6 +80,16 @@ const AsesorPage = () => {
       alert('No se pudo finalizar la asesoría');
     }
   };
+  const abrirChat = async (asesoriaId) => {
+    try {
+      const res = await fetch(`http://localhost:3001/api/alumno/mensajes/${asesoriaId}`);
+      const data = await res.json();
+      setChatMessages(data);
+      setChatRoom(asesoriaId);
+    } catch (error) {
+      console.error("Error al cargar mensajes del chat:", error);
+    }
+  };
 
   return (
     <div className="flex flex-col md:flex-row h-screen">
@@ -129,7 +139,7 @@ const AsesorPage = () => {
                   setIsFinalizarModalOpen(true);
                 }}
                 onModificar={() => console.log('Modificar', a.idAsesoria)}
-                onClickChat={() => setChatRoom(a.idAsesoria)}
+                onClickChat={() => abrirChat(a.idAsesoria)}
               />
             ))}
           </div>
@@ -184,8 +194,24 @@ const AsesorPage = () => {
 
       {/* Chat */}
       {chatRoom && (
-        <ChatWidget room={chatRoom} user={matricula} />
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white rounded-lg shadow-lg max-w-xl w-full h-[80vh] p-4 relative">
+            <button
+              onClick={() => setChatRoom(null)}
+              className="absolute top-2 right-2 text-gray-700 hover:text-red-500 font-bold"
+            >
+              X
+            </button>
+            <ChatWidget
+              room={chatRoom}
+              user={matricula} // <-- asegúrate que `matricula` no sea null
+              initialMessages={chatMessages}
+              onClose={() => setChatRoom(null)}
+            />
+          </div>
+        </div>
       )}
+
     </div>
   );
 };
