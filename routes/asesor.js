@@ -141,11 +141,38 @@ router.post('/asesorias/finalizar-asesoria', (req, res) => {
             return res.status(500).json({ error: 'Error al actualizar la base de datos' });
         }
 
-        res.json({ message: 'Asesoría finalizada correctamente', results });
+        res.json({ message: 'Asesoría finalizada correctamente'});
     });
 });
 
-//Aceptar o programar una asesoria
+router.get('/graficar-asesorias', (req, res) => {
+    const matriculaAsesor = req.query.matricula;
+    
+    if (!matriculaAsesor) {
+        return res.status(400).json({ error: 'Falta parámetro matricula' });
+    }
+    const sql = `
+        SELECT
+            YEAR (fecha_creacion) AS anio,
+            MONTH (fecha_creacion) AS mes,
+            COUNT(*) AS total_asesorias
+        FROM Asesoria
+        WHERE estado = 4 AND matriculaAsesor = ? 
+        GROUP BY anio, mes
+        ORDER BY anio, mes
+    `;
+    db.query(sql, [matriculaAsesor], (err, results) => {
+        if (err) {
+            console.error('Error al graficar los datos', err);
+            return res.status(500).json({ error: 'Error al actualizar la base de datos' });
+        }
+        res.json(results);
+    });
+
+});
+
+
+//Aceptar una asesoria
 router.post('/asesorias/aceptar-asesoria', (req, res) => {
     const { idAsesoria } = req.body;
 
@@ -161,7 +188,29 @@ router.post('/asesorias/aceptar-asesoria', (req, res) => {
             return res.status(500).json({ error: 'Error al actualizar la base de datos' });
         }
 
-        res.json({ message: 'Asesoría aceptada correctamente', results });
+        res.json({ message: 'Asesoría aceptada correctamente'}, results);
+    });
+});
+
+//Cambiar contraseña
+router.put('/cambiar-contrasena', (req, res) => {
+    const { matricula, nuevaContrasena } = req.body;
+
+    if (!matricula || !nuevaContrasena) {
+        return res.status(400).json({ error: 'Faltan datos requeridos para realizar la acción' });
+    }
+
+    const sql = `UPDATE Asesor SET password = ? WHERE matricula = ?`;
+
+    db.query(sql, [nuevaContrasena, matricula], (err, results) => {
+        if (err) {
+            console.error('Error al cambiar la contraseña:', err);
+            return res.status(500).json({ error: 'Error al actualizar la base de datos' });
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ error: 'Asesor no encontrado' });
+        }
+        res.json({ message: 'Contraseña actualizada correctamente'});
     });
 });
 
