@@ -11,13 +11,13 @@ export default function CrearCuenta() {
   const [repetirCorreo, setRepetirCorreo] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [materias, setMaterias] = useState([]);
+  const [carreras, setCarreras] = useState([]);
   const router = useRouter();
 
   useEffect(() => {
-    fetch('/api/alumno/materias')
+    fetch('http://localhost:3001/api/alumno/carreras') // Asegúrate que este endpoint devuelve las carreras correctamente
       .then(res => res.json())
-      .then(data => setMaterias(data))
+      .then(data => setCarreras(data))
       .catch(console.error);
   }, []);
 
@@ -30,7 +30,7 @@ export default function CrearCuenta() {
     if (!carrera) return alert('Selecciona una carrera.');
 
     const payload = { matricula, nombre, carrera, correoInstitucional: correo, password };
-    const res = await fetch('/api/alumno/register', {
+    const res = await fetch('http://localhost:3001/api/alumno/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -80,9 +80,9 @@ export default function CrearCuenta() {
             className="w-full border rounded px-3 py-2 focus:outline-none"
           >
             <option value="">Selecciona una carrera</option>
-            {materias.map(m => (
-              <option key={m.idMateria} value={m.idMateria}>
-                {m.nombreMateria}
+            {carreras.map(c => (
+              <option key={c.idCarrera} value={c.idCarrera}>
+                {c.nombre}
               </option>
             ))}
           </select>
