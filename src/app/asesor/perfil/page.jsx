@@ -1,15 +1,24 @@
 'use client'
 import HamburgerMenu from '@/components/HamburgerMenu'
-import { ClientSegmentRoot } from 'next/dist/client/components/client-segment';
 import React, { useState, useEffect } from 'react'
+import { Eye, EyeOff } from "lucide-react";
 
 const PerfilPage = () => {
-  const matriculaAsesor = 'S102';
-  const [selectedTags, setSelectedTags] = useState(['Fundamentos', 'Calculo I']);
-  const [newPassword, setNewPassword] = useState('');
-  const [options] = useState([
-    'Programación', 'Matemáticas', 'POO', 'FUNDAMENTOS', 'ESTRUCTURA', 'AUTÓMATAS I'
-  ]);
+  const [matricula, setMatricula] = useState(null);
+  const [verContrasena, setVerContrasena] = useState(false);
+  const [verNuevaContrasena, setVerNuevaContrasena] = useState(false);
+  const [verConfirmacion, setVerConfirmacion] = useState(false);
+  const [nuevaContrasena, setNuevaContrasena] = useState('');
+  const [confirmarContrasena, setConfirmarContrasena] = useState('');
+  const [msgError, setMsgError] = useState('');
+  const [msgExito, setMsgExito] = useState('');
+  
+  // Leer la matricula del localStorage
+  useEffect(() => {
+    const m = localStorage.getItem('matricula');
+    setMatricula(m);
+  }, []);
+
   const [perfil, setPerfil] = useState({
     nombreAsesor: '',
     correo: '',
@@ -17,10 +26,43 @@ const PerfilPage = () => {
     contraseñaActual: ''
   });
 
+  const handleCambiarContra = async () => {
+    setMsgError('');
+    setMsgExito('');
+    if(!nuevaContrasena || !confirmarContrasena){
+      setMsgError("Complete por favor los campos de contraseña!");
+      return;
+    }
+    if(nuevaContrasena !== confirmarContrasena) {
+      setMsgError("Las contraseñas no coinciden")
+      return;
+    }
+    try {
+      const res = await fetch('http://localhost:3001/api/asesor/cambiar-contrasena',
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          matricula: matriculaAsesor,
+          nuevaContrasena
+        }),
+      });
+      if (!res.ok) throw new Error("Error al cambiar la contraseña");
+      setMsgExito('Contraseña actualizada con exito!');
+      setNuevaContrasena('');
+      setConfirmarContrasena('');
+    } catch (err) {
+      setMsgError('Ocurrió un error al cambiar la contraseña.');
+      console.error(err);
+    }
+
+  }
   useEffect(() => {
     const fetchPerfil = async () => {
       try {
-        const res = await fetch(`http://localhost:3001/api/asesor/asesorias/perfil-asesor?matricula=${matriculaAsesor}`);
+        const res = await fetch(`http://localhost:3001/api/asesor/asesorias/perfil-asesor?matricula=${matricula}`);
         if (!res.ok) throw new Error('Error al obtener perfil');
         const data = await res.json();
           if (data.length > 0) {
@@ -31,18 +73,8 @@ const PerfilPage = () => {
       }
     };
     fetchPerfil();
-  }, [matriculaAsesor]);
+  }, [matricula]);
 
-  const removeTag = (tag) => {
-    setSelectedTags(selectedTags.filter(t => t !== tag));
-  };
-
-  const addTag = (e) => {
-    const value = e.target.value;
-    if (value && !selectedTags.includes(value)) {
-      setSelectedTags([...selectedTags, value]);
-    }
-  };
 
   return (
     <div className='flex flex-col md:flex-row h-screen'>
@@ -81,61 +113,85 @@ const PerfilPage = () => {
               readOnly
               className="flex-1 p-2 text-black rounded bg-[#FFFFFF]" />
           </div>
-
-          {/* Capacitación */}
-          <div>
-            <label className="block mb-2">Capacitación:</label>
-            <select onChange={addTag} className="w-full p-2 mb-2 text-black rounded bg-[#FFFFFF]">
-              <option value="">Elegir opciones</option>
-              {options.map(option => (
-                <option key={option} value={option}>{option}</option>
-              ))}
-            </select>
-            <div className="flex flex-wrap gap-2">
-              {selectedTags.map(tag => (
-                <div key={tag} className="bg-white text-black px-2 py-1 rounded flex items-center">
-                  {tag}
-                  <button
-                    onClick={() => removeTag(tag)}
-                    className="ml-2 text-red-600 font-bold"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-
           {/* Contraseña */}
           <div className="flex items-center">
             <label className="w-32">Contraseña actual:</label>
-            <input
-              type="password"
-              value={perfil.contraseñaActual}
-              readOnly
-              className="flex-1 p-2 text-black rounded bg-[#FFFFFF]" />
+            <div className="flex items-center flex-1 bg-[#FFFFFF] rounded p-2">
+              <input
+                type={verContrasena ? "text" : "password"}
+                value={perfil.contraseñaActual}
+                readOnly
+                className="flex-1 text-black bg-transparent outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => setVerContrasena(!verContrasena)}
+                className="ml-2 text-gray-500 hover:text-gray-800"
+              >
+                {verContrasena ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
           </div>
          {/* Cambiar contraseña */}
          <div className="flex items-center">
             <label className="w-32">Nueva Contraseña:</label>
-            <input type="password" className="flex-1 p-2 text-black rounded bg-[#FFFFFF]" />
+            <div className="flex items-center flex-1 bg-[#FFFFFF] rounded p-1">
+              <input 
+                type={verNuevaContrasena ? "text" : "password"}
+                value={nuevaContrasena}
+                onChange={e => setNuevaContrasena(e.target.value)} 
+                className="flex-1 p-2 text-black rounded bg-[#FFFFFF]" 
+
+              />
+              <button
+                type="button"
+                onClick={() => setVerNuevaContrasena(!verNuevaContrasena)}
+                className="ml-2 text-gray-500 hover:text-gray-800"
+              >
+                {verNuevaContrasena ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
           </div>
           {/* Cambiar contraseña */}
           <div className="flex items-center">
             <label className="w-32">Confirme su nueva contraseña:</label>
-            <input
-              type="password"
-              value={newPassword}
-              onChange={e => setNewPassword(e.target.value)}
-              placeholder="Repite tu nueva contraseña"
-              className="flex-1 p-2 text-black rounded bg-[#FFFFFF]"
-            />
+            <div className="flex items-center flex-1 bg-[#FFFFFF] rounded p-1">
+              <input 
+                type={verConfirmacion ? "text" : "password"} 
+                className="flex-1 p-2 text-black rounded bg-[#FFFFFF]" 
+                value={confirmarContrasena}
+                onChange={e => setConfirmarContrasena(e.target.value)}
+              />
+              <button
+                type="button"
+                onClick={() => setVerConfirmacion(!verConfirmacion)}
+                className="ml-2 text-gray-500 hover:text-gray-800"
+              >
+                {verConfirmacion ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+          </div>
+          {msgError && (
+            <p className="text-red-500 text-sm mt-2">{msgError}</p>
+          )}
+          {msgExito && (
+            <p className="text-green-500 text-sm mt-2">{msgExito}</p>
+          )}
+
+          {/* Botón para guardar */}
+          <div className="flex justify-end mt-4">
+            <button
+              onClick={handleCambiarContra}
+              className="bg-[#FFC943] hover:bg-yellow-300 text-white font-semibold py-2 px-4 rounded"
+            >
+              Guardar Cambios
+            </button>
           </div>
         </div>
       </main>
     </div>
   );
-  
+ 
 }
 
 export default PerfilPage
