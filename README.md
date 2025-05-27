@@ -72,6 +72,8 @@ Npm install socket.io-client
 
 #### Acosta Leon Brayan
 
+### Daniel Ulises Reyes Bojorquez
+
 #### Flores Hernandez Roberto David
 
 #### Heredia Andrey Victor Felipe
