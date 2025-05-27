@@ -70,7 +70,7 @@ Npm install socket.io-client
 
 ## Integrantes
 
-#### Acosta Leon Bryan
+#### Acosta Leon Brayan
 
 #### Flores Hernandez Roberto David
 
