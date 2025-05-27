@@ -72,7 +72,7 @@ Npm install socket.io-client
 
 #### Acosta Leon Brayan
 
-### Daniel Ulises Reyes Bojorquez
+#### Daniel Ulises Reyes Bojorquez
 
 #### Flores Hernandez Roberto David
 
