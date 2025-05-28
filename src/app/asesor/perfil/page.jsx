@@ -15,7 +15,7 @@ const PerfilPage = () => {
   
   // Leer la matricula del localStorage
   useEffect(() => {
-    const m = localStorage.getItem('matricula');
+    const m = sessionStorage.getItem('matricula');
     setMatricula(m);
   }, []);
 

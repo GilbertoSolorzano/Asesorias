@@ -17,7 +17,7 @@ function Login() {
       });
 
       const { tipoUsuario } = response.data;
-      localStorage.setItem('matricula', matricula);
+      sessionStorage.setItem('matricula', matricula);
       // Redirecciona según el tipo de usuario
       if (tipoUsuario === 'administrador') router.push('/administrador');
       else if (tipoUsuario === 'asesor') router.push('/asesor');

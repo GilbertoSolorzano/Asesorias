@@ -13,9 +13,9 @@ export default function PerfilPage() {
 
   const [matricula, setMatricula] = useState(null);
 
-  // 1) Leer matrícula de localStorage
+  // 1) Leer matrícula de 
   useEffect(() => {
-    const m = localStorage.getItem('matricula');
+    const m = sessionStorage.getItem('matricula');
     if (m) {
       setMatricula(m);
     } else {
