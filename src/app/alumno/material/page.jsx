@@ -50,7 +50,7 @@ export default function HomePage() {
         <div className="mb-6 flex items-center space-x-4">
           <label className="font-semibold text-gray-700">Filtrar por materia:</label>
           <select
-            className="p-2 border rounded"
+            className="p-2 border rounded text-black"
             value={filtroMateria}
             onChange={(e) => setFiltroMateria(e.target.value)}
           >

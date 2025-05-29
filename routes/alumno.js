@@ -166,17 +166,20 @@ router.get('/asesorias/completadas', (req, res) => {
   }
   const sql = `
     SELECT
-      a.idAsesoria,
-      m.nombreMateria AS materia,
-      t.nombreTema    AS tema,
-      s.nombre        AS nombreAsesor,
-      a.fecha_acordada AS fechaAtendida
-    FROM Asesoria a
-    JOIN Tema    t ON a.idTema   = t.idTema
-    JOIN Materia m ON t.idMateria = m.idMateria
-    JOIN Asesor  s ON a.matriculaAsesor = s.matricula
-    WHERE a.matriculaAlumno = ?
-      AND a.estado = 4
+     a.idAsesoria,
+  m.nombreMateria AS materia,
+  t.nombreTema    AS tema,
+  s.nombre        AS nombreAsesor,
+  a.fecha_acordada AS fechaAtendida,
+  e.contestada
+FROM Asesoria a
+JOIN Encuesta e
+  ON a.idAsesoria = e.idAsesoria AND e.tipoEncuesta = 'alumno'
+JOIN Tema t    ON a.idTema   = t.idTema
+JOIN Materia m ON t.idMateria = m.idMateria
+JOIN Asesor s  ON a.matriculaAsesor = s.matricula
+WHERE a.matriculaAlumno = ?
+  AND a.estado = 4;
   `;
   db.query(sql, [matricula], (err, results) => {
     if (err) {
@@ -315,6 +318,118 @@ router.get('/carreras', (req, res) => {
     }
     res.json(results);
   });
+});
+
+router.get('/asesorias/:idAsesoria', (req, res) => {
+  const { idAsesoria } = req.params;
+  const sql = `
+    SELECT 
+      a.idAsesoria,
+      a.matriculaAlumno,
+      a.matriculaAsesor,
+      a.lugar,
+      a.estado,
+      a.fecha_acordada,
+      t.nombreTema,
+      m.nombreMateria,
+      s.nombre AS nombreAsesor
+      e.contestada
+    FROM Asesoria a
+    JOIN Tema t ON a.idTema = t.idTema
+    JOIN Materia m ON t.idMateria = m.idMateria
+    LEFT JOIN Asesor s ON a.matriculaAsesor = s.matricula
+    WHERE a.idAsesoria = ?
+  `;
+  db.query(sql, [idAsesoria], (err, results) => {
+    if (err) {
+      console.error('Error al obtener asesoría:', err);
+      return res.status(500).json({ error: 'Error del servidor' });
+    }
+    if (results.length === 0) {
+      return res.status(404).json({ error: 'Asesoría no encontrada' });
+    }
+    res.json(results[0]);
+  });
+});
+
+router.get('/preguntas/alumno', async (req, res) => {
+  try {
+    // Usamos db.promise() si tu conexión es con mysql2; si es con otro cliente,
+    // adapta la llamada a tu API de promesas o callbacks.
+    const [preguntas] = await db.promise().query(
+      `SELECT idPregunta, enunciado
+       FROM PreguntaEncuesta
+       WHERE tipoEncuesta = 'alumno'`
+    );
+    res.json(preguntas);
+  } catch (error) {
+    console.error('Error al obtener preguntas:', error);
+    res.status(500).json({ mensaje: 'Error al obtener preguntas' });
+  }
+});
+
+// 2) Guardar respuestas de encuesta de alumno
+//    POST /api/alumno/encuesta/alumno
+// routes/alumno.js
+router.post('/encuesta/alumno', async (req, res) => {
+  const { idAsesoria, matriculaRespondente, respuestas } = req.body;
+  console.log('Body recibido:', req.body);
+
+  // Normalizar a array si viene como objeto
+  const arr = Array.isArray(respuestas) ? respuestas : Object.values(respuestas);
+  if (!idAsesoria || !matriculaRespondente || arr.length === 0) {
+    return res.status(400).json({ error: 'Datos o respuestas faltantes.' });
+  }
+
+  try {
+    // 1) Upsert en Encuesta
+    await db.promise().query(
+      `
+      INSERT INTO Encuesta (idAsesoria, tipoEncuesta)
+      VALUES (?, 'alumno')
+      ON DUPLICATE KEY UPDATE idEncuesta = LAST_INSERT_ID(idEncuesta)
+      `,
+      [idAsesoria]
+    );
+
+    // 2) Recuperar idEncuesta (usando LAST_INSERT_ID)
+    const [insertResult] = await db.promise().query('SELECT LAST_INSERT_ID() AS id');
+    const idEncuesta = insertResult[0].id;
+    console.log('idEncuesta obtenido:', idEncuesta);
+
+    // 3) Preparar bulk insert de respuestas
+    const values = arr.map(r => [
+      idEncuesta,
+      r.idPregunta,
+      matriculaRespondente,
+      r.respuesta
+    ]);
+    console.log('Valores a insertar:', values);
+
+    // 4) Insertar en bloque
+    await db.promise().query(
+      `
+      INSERT INTO RespuestaEncuesta
+        (idEncuesta, idPregunta, matriculaRespondente, respuesta)
+      VALUES ?
+      `,
+      [values]
+    );
+
+    return res.status(201).json({ message: 'Respuestas guardadas' });
+    await db.promise().query(
+      `UPDATE Encuesta
+        SET contestada = 1
+        WHERE idEncuesta = ?`,
+      [idEncuesta]
+    );
+
+
+  } catch (error) {
+    // Mostrar el error completo de SQL
+    console.error('Error guardando encuesta:', error.code, error.sqlMessage || error.message);
+    return res.status(500).json({ error: 'Fallo al guardar encuesta.' });
+  }
 });
 
 

@@ -4,8 +4,11 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import HamburgerMenu from "@/components/HamburgerMenu";
 import AsesorCardCompleted from "@/components/AsesorCardCompleted";
+import EncuestaAlumno from "@/components/EncuestaAlumno";
 
 export default function HistorialPage() {
+  const [mostrarEncuesta, setMostrarEncuesta] = useState(false);
+  const [asesoriaSeleccionada, setAsesoriaSeleccionada] = useState(null);
   const [completadas, setCompletadas] = useState([]);
   const [matricula, setMatricula] = useState(null);
   const router = useRouter();
@@ -45,18 +48,30 @@ export default function HistorialPage() {
           </p>
         ) : (
           <div className="grid grid-cols-3 gap-8">
-            {completadas.map((c) => (
+           {completadas.map(c => (
               <AsesorCardCompleted
                 key={c.idAsesoria}
                 materia={c.materia}
                 tema={c.tema}
                 nombreAsesor={c.nombreAsesor}
                 fechaAtendida={c.fechaAtendida}
-                onVerChat={() => router.push(`/chat/${c.idAsesoria}`)}
+                //onVerChat={() => router.push(`/chat/${c.idAsesoria}`)}
+                onEncuesta={() => setMostrarEncuesta(c.idAsesoria)}
+                contestada={c.contestada === 1}  // o true/false
               />
             ))}
           </div>
         )}
+       {mostrarEncuesta && asesoriaSeleccionada && (
+        <EncuestaAlumno
+          idAsesoria={asesoriaSeleccionada.idAsesoria}
+          matricula={matricula}
+          onClose={() => {
+            setMostrarEncuesta(false);
+            setAsesoriaSeleccionada(null);
+          }}
+        />
+)}
       </div>
     </div>
   );
