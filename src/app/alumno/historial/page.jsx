@@ -10,6 +10,7 @@ export default function HistorialPage() {
   const [mostrarEncuesta, setMostrarEncuesta] = useState(false);
   const [asesoriaSeleccionada, setAsesoriaSeleccionada] = useState(null);
   const [completadas, setCompletadas] = useState([]);
+  const [completadasPendientes, setCompletadasPendientes] = useState([]);
   const [matricula, setMatricula] = useState(null);
   const router = useRouter();
 
@@ -21,15 +22,20 @@ export default function HistorialPage() {
 
   // Cargar solo completadas (estado 4)
   useEffect(() => {
-    if (!matricula) return;
-    fetch(
-      `http://localhost:3001/api/alumno/asesorias/completadas?matricula=${matricula}`
-    )
-      .then((r) => r.json())
-      .then(setCompletadas)
-      .catch(console.error);
-  }, [matricula]);
+  if (!matricula) return;
 
+  fetch(`http://localhost:3001/api/alumno/asesorias/completadas?matricula=${matricula}`)
+    .then(res => res.json())
+    .then(data => {
+      if (Array.isArray(data)) {
+        setCompletadas(data);
+        setCompletadasPendientes(data.filter(a => Number(a.contestada) === 0));
+      } else {
+        console.error('Respuesta inesperada:', data);
+      }
+    })
+    .catch(console.error);
+}, [matricula]);
   return (
     <div className="flex min-h-screen relative bg-gray-100">
       <aside className="bg-[#212227] w-20 flex flex-col items-center py-4">
@@ -56,7 +62,10 @@ export default function HistorialPage() {
                 nombreAsesor={c.nombreAsesor}
                 fechaAtendida={c.fechaAtendida}
                 //onVerChat={() => router.push(`/chat/${c.idAsesoria}`)}
-                onEncuesta={() => setMostrarEncuesta(c.idAsesoria)}
+                onEncuesta={() => {
+                  setAsesoriaSeleccionada(c);
+                  setMostrarEncuesta(true);
+                }}
                 contestada={c.contestada === 1}  // o true/false
               />
             ))}

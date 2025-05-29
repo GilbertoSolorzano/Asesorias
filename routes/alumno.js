@@ -164,23 +164,25 @@ router.get('/asesorias/completadas', (req, res) => {
   if (!matricula) {
     return res.status(400).json({ error: 'Matrícula requerida' });
   }
+
   const sql = `
     SELECT
-     a.idAsesoria,
-  m.nombreMateria AS materia,
-  t.nombreTema    AS tema,
-  s.nombre        AS nombreAsesor,
-  a.fecha_acordada AS fechaAtendida,
-  e.contestada
-FROM Asesoria a
-JOIN Encuesta e
-  ON a.idAsesoria = e.idAsesoria AND e.tipoEncuesta = 'alumno'
-JOIN Tema t    ON a.idTema   = t.idTema
-JOIN Materia m ON t.idMateria = m.idMateria
-JOIN Asesor s  ON a.matriculaAsesor = s.matricula
-WHERE a.matriculaAlumno = ?
-  AND a.estado = 4;
+      a.idAsesoria,
+      m.nombreMateria AS materia,
+      t.nombreTema    AS tema,
+      s.nombre        AS nombreAsesor,
+      a.fecha_acordada AS fechaAtendida,
+      e.contestada
+    FROM Asesoria a
+    JOIN Encuesta e
+      ON a.idAsesoria = e.idAsesoria AND e.tipoEncuesta = 'alumno'
+    JOIN Tema t    ON a.idTema   = t.idTema
+    JOIN Materia m ON t.idMateria = m.idMateria
+    JOIN Asesor s  ON a.matriculaAsesor = s.matricula
+    WHERE a.matriculaAlumno = ?
+      AND a.estado = 4;
   `;
+
   db.query(sql, [matricula], (err, results) => {
     if (err) {
       console.error('Error al obtener completadas:', err);
@@ -189,6 +191,9 @@ WHERE a.matriculaAlumno = ?
     res.json(results);
   });
 });
+
+
+
 
 // Listar todas las materias con material de apoyo disponible
 router.get('/materiales/materias', (req, res) => {
