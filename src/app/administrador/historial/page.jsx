@@ -10,7 +10,20 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 export default function AsesoriasFinalizadas() {
   const [datosAsesores, setDatosAsesores] = useState([]);
   const [graficaData, setGraficaData] = useState({});
-
+  const [modalVisible, setModalVisible] = useState(false);
+  const [datosEncuesta, setDatosEncuesta] = useState({ alumno: [], asesor: [] });
+  
+  const abrirModal = async (idAsesoria) => {
+    try {
+      const res = await axios.get(`http://localhost:3001/api/admin/encuestas/${idAsesoria}`);
+      setDatosEncuesta(res.data);
+      setModalVisible(true);
+    } catch (error) {
+      console.error('Error al obtener encuesta:', error);
+      alert('Error al cargar las encuestas');
+    }
+  };
+  
   // Función para agrupar por materia y contar las asesorías
   const agruparPorMateria = (datos) => {
     const materialesContados = {};
@@ -85,6 +98,7 @@ export default function AsesoriasFinalizadas() {
                     <th className="py-2 px-4">Nombre Alumno</th>
                     <th className="py-2 px-4">Materia</th>
                     <th className="py-2 px-4">Encuestas</th>
+                    <th className="py-2 px-4">Mensajes</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -95,8 +109,16 @@ export default function AsesoriasFinalizadas() {
                       <td className="py-2 px-4">{asesor.nombre_alumno}</td>
                       <td className="py-2 px-4">{asesor.material}</td>
                       <td className="py-2 px-4">
-                        <button className="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-4 rounded-full">
-                          Ver encuesta
+                      <button
+                        onClick={() => abrirModal(asesor.idAsesoria)}
+                        className="bg-green-500 hover:bg-orange-600 text-white font-bold py-1 px-4 rounded-full"
+                      >
+                        Ver
+                      </button>
+                      </td>
+                      <td className="py-2 px-4">
+                        <button className="bg-orange-500 hover:bg-green-600 text-white font-bold py-1 px-4 rounded-full">
+                          Ver
                         </button>
                       </td>
                     </tr>
@@ -107,6 +129,57 @@ export default function AsesoriasFinalizadas() {
           </div>
         </div>
       </div>
+      {modalVisible && (
+  <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50 px-4">
+    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[85vh] overflow-y-auto p-8 relative animate-fade-in-up">
+      
+      <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b pb-2">Encuesta del Alumno</h2>
+      {datosEncuesta.alumno.length > 0 ? (
+        datosEncuesta.alumno.map((item, idx) => (
+          <div key={idx} className="mb-4">
+            <p className="font-medium text-gray-900">{item.enunciado}</p>
+            <p className="text-gray-600 ml-4">
+              <span className="font-semibold">Respuesta:</span>{' '}
+              {item.respuesta !== null ? item.respuesta : (
+                <span className="italic text-gray-400">Sin respuesta</span>
+              )}
+            </p>
+          </div>
+        ))
+      ) : (
+        <p className="italic text-gray-500">No hay preguntas para el alumno.</p>
+      )}
+
+      <h2 className="text-2xl font-bold text-gray-800 mt-8 mb-6 border-b pb-2">Encuesta del Asesor</h2>
+      {datosEncuesta.asesor.length > 0 ? (
+        datosEncuesta.asesor.map((item, idx) => (
+          <div key={idx} className="mb-4">
+            <p className="font-medium text-gray-900">{item.enunciado}</p>
+            <p className="text-gray-600 ml-4">
+              <span className="font-semibold">Respuesta:</span>{' '}
+              {item.respuesta !== null ? item.respuesta : (
+                <span className="italic text-gray-400">Sin respuesta</span>
+              )}
+            </p>
+          </div>
+        ))
+      ) : (
+        <p className="italic text-gray-500">No hay preguntas para el asesor.</p>
+      )}
+
+      <div className="flex justify-end mt-6">
+        <button
+          onClick={() => setModalVisible(false)}
+          className="px-5 py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition"
+        >
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+  
     </div>
   );
 }

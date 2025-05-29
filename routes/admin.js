@@ -150,7 +150,8 @@ router.get('/asesorias/finalizadas', (req, res) => {
         m.nombreMateria AS material,
         a.nombre AS nombre_asesor,
         al.nombre AS nombre_alumno,
-        ase.fecha_acordada
+        ase.fecha_acordada,
+        ase.idAsesoria
         FROM Asesoria AS ase
         JOIN Asesor AS a ON ase.matriculaAsesor = a.matricula
         JOIN Alumno AS al ON ase.matriculaAlumno = al.matricula
@@ -166,6 +167,90 @@ router.get('/asesorias/finalizadas', (req, res) => {
         res.json(results);
     });
 });
+router.get('/encuestas/:idAsesoria', (req, res) => {
+    const { idAsesoria } = req.params;
+  
+    db.query(
+      `SELECT idEncuesta FROM Encuesta WHERE idAsesoria = ? AND tipoEncuesta = 'alumno'`,
+      [idAsesoria],
+      (err, resultsAlumno) => {
+        if (err) {
+          console.error(err);
+          return res.status(500).json({ message: 'Error al obtener encuesta alumno' });
+        }
+        const encuestaAlumno = resultsAlumno[0];
+  
+        let respuestasAlumno = [];
+  
+        const continuarConAsesor = () => {
+          db.query(
+            `SELECT idEncuesta FROM Encuesta WHERE idAsesoria = ? AND tipoEncuesta = 'asesor'`,
+            [idAsesoria],
+            (err3, resultsAsesor) => {
+              if (err3) {
+                console.error(err3);
+                return res.status(500).json({ message: 'Error al obtener encuesta asesor' });
+              }
+              const encuestaAsesor = resultsAsesor[0];
+  
+              if (!encuestaAsesor) {
+                return res.json({ alumno: respuestasAlumno, asesor: [] });
+              }
+  
+              db.query(
+                `SELECT p.enunciado, r.respuesta
+                 FROM PreguntaEncuesta p
+                 LEFT JOIN RespuestaEncuesta r 
+                   ON p.idPregunta = r.idPregunta AND r.idEncuesta = ?
+                 WHERE p.tipoEncuesta = 'asesor'
+                 ORDER BY p.idPregunta`,
+                [encuestaAsesor.idEncuesta],
+                (err4, respuestasAsesor) => {
+                  if (err4) {
+                    console.error(err4);
+                    return res.status(500).json({ message: 'Error al obtener respuestas asesor' });
+                  }
+  
+                  return res.json({
+                    alumno: respuestasAlumno,
+                    asesor: respuestasAsesor,
+                  });
+                }
+              );
+            }
+          );
+        };
+  
+        if (!encuestaAlumno) {
+          respuestasAlumno = [];
+          return continuarConAsesor();
+        }
+  
+        db.query(
+          `SELECT p.enunciado, r.respuesta
+           FROM PreguntaEncuesta p
+           LEFT JOIN RespuestaEncuesta r 
+             ON p.idPregunta = r.idPregunta AND r.idEncuesta = ?
+           WHERE p.tipoEncuesta = 'alumno'
+           ORDER BY p.idPregunta`,
+          [encuestaAlumno.idEncuesta],
+          (err2, resultAlumnoFinal) => {
+            if (err2) {
+              console.error(err2);
+              return res.status(500).json({ message: 'Error al obtener preguntas/respuestas alumno' });
+            }
+  
+            respuestasAlumno = resultAlumnoFinal;
+            continuarConAsesor();
+          }
+        );
+      }
+    );
+  });
+  
+  
+  
+  
 router.get('/preguntas', (req, res) => {
     const sql = `SELECT * FROM PreguntaEncuesta`;
     db.query(sql, (err, results) => {
