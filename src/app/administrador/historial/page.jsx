@@ -56,7 +56,7 @@ export default function AsesoriasFinalizadas() {
   }, []); // Se ejecuta solo una vez al montar el componente
 
   return (
-    <div className="flex relative">
+    <div className="flex relative text-black">
       {/* Sidebar */}
       <aside className="bg-[#212227] w-20 flex flex-col items-center py-4">
                   <HamburgerMenu  role="administrador"/>

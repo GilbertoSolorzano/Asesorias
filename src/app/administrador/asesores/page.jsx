@@ -32,7 +32,7 @@ const filteredAsesores = asesoresData.filter((asesor) =>
 );
 
 return (
-    <div className="flex h-screen relative">
+    <div className="flex text-black h-screen relative">
         <aside className="bg-[#212227] w-20 flex flex-col items-center py-4">
             <HamburgerMenu  role="administrador"/>
         </aside>

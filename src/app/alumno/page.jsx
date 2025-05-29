@@ -125,9 +125,9 @@ export default function HomePage() {
         </header>
 
         <section className="mb-8">
-          <h2 className="text-xl font-semibold mb-4">Solicitudes Pendientes</h2>
+          <h2 className="text-black text-xl font-semibold mb-4">Solicitudes Pendientes</h2>
           {pendientes.length === 0 ? (
-            <p className="text-gray-500">No tienes solicitudes pendientes.</p>
+            <p className="text-black">No tienes solicitudes pendientes.</p>
           ) : (
             <div className="grid grid-cols-3 gap-4">
               {pendientes.map((a) => (
@@ -145,9 +145,9 @@ export default function HomePage() {
         </section>
 
         <section className="mb-8">
-          <h2 className="text-xl font-semibold mb-4">Solicitudes Aceptadas</h2>
+          <h2 className="text-black text-xl font-semibold mb-4">Solicitudes Aceptadas</h2>
           {aceptadas.length === 0 ? (
-            <p className="text-gray-500">No tienes solicitudes aceptadas.</p>
+            <p className="text-black">No tienes solicitudes aceptadas.</p>
           ) : (
             <div className="grid grid-cols-3 gap-4">
               {aceptadas.map((a) => (

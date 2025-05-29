@@ -7,6 +7,9 @@ const bodyParser = require('body-parser');
 const http = require('http');
 const { Server } = require('socket.io');
 const db = require('./db');
+const alumnosRoutes = require("./routes/alumno");
+
+
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -21,6 +24,7 @@ app.use('/api/admin', require('./routes/admin'));
 app.use('/api/asesor',require('./routes/asesor'));
 app.use('/api/alumno',require('./routes/alumno'));
 app.use('/api/auth',  require('./routes/auth'));
+
 
 // Creamos el servidor HTTP y lo conectamos a Express
 const server = http.createServer(app);

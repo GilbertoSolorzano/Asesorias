@@ -54,7 +54,7 @@ export default function ModificarEncuestas() {
         }
     };
     const renderEncuesta = (tipo, titulo) => (
-        <div className="bg-white rounded-3xl shadow-md p-6 w-full max-w-2xl mb-8">
+        <div className="bg-white text-black rounded-3xl shadow-md p-6 w-full max-w-2xl mb-8">
         <h2 className="text-xl font-semibold mb-4 text-center">{titulo}</h2>
         <table className="w-full mb-4">
             <thead>
