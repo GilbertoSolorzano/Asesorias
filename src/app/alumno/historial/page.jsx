@@ -10,24 +10,35 @@ export default function HistorialPage() {
   const [mostrarEncuesta, setMostrarEncuesta] = useState(false);
   const [asesoriaSeleccionada, setAsesoriaSeleccionada] = useState(null);
   const [completadas, setCompletadas] = useState([]);
+  const [completadasPendientes, setCompletadasPendientes] = useState([]);
   const [matricula, setMatricula] = useState(null);
   const router = useRouter();
 
-  // Leer matrícula al montar
+  // 1) Leer matrícula
   useEffect(() => {
     const m = localStorage.getItem("matricula");
     setMatricula(m);
   }, []);
 
-  // Cargar solo completadas (estado 4)
-  useEffect(() => {
+  // 2) Función para recargar completadas y pendientes
+  const cargarCompletadas = () => {
     if (!matricula) return;
-    fetch(
-      `http://localhost:3001/api/alumno/asesorias/completadas?matricula=${matricula}`
-    )
-      .then((r) => r.json())
-      .then(setCompletadas)
+    fetch(`http://localhost:3001/api/alumno/asesorias/completadas?matricula=${matricula}`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setCompletadas(data);
+          setCompletadasPendientes(data.filter(a => Number(a.contestada) === 0));
+        } else {
+          console.error('Respuesta inesperada:', data);
+        }
+      })
       .catch(console.error);
+  };
+
+  // 3) Al montar o cambiar matrícula, cargar
+  useEffect(() => {
+    cargarCompletadas();
   }, [matricula]);
 
   return (
@@ -42,36 +53,43 @@ export default function HistorialPage() {
           </h1>
         </header>
 
+        {/* 4) Renderizar todas las completadas */}
         {completadas.length === 0 ? (
           <p className="text-gray-500">
             No tienes asesorías completadas aún.
           </p>
         ) : (
           <div className="grid grid-cols-3 gap-8">
-           {completadas.map(c => (
+            {completadas.map((c) => (
               <AsesorCardCompleted
                 key={c.idAsesoria}
                 materia={c.materia}
                 tema={c.tema}
                 nombreAsesor={c.nombreAsesor}
                 fechaAtendida={c.fechaAtendida}
-                //onVerChat={() => router.push(`/chat/${c.idAsesoria}`)}
-                onEncuesta={() => setMostrarEncuesta(c.idAsesoria)}
-                contestada={c.contestada === 1}  // o true/false
+                onVerChat={() => router.push(`/chat/${c.idAsesoria}`)}
+                onEncuesta={() => {
+                  setAsesoriaSeleccionada(c);
+                  setMostrarEncuesta(true);
+                }}
+                contestada={c.contestada === 1}
               />
             ))}
           </div>
         )}
-       {mostrarEncuesta && asesoriaSeleccionada && (
-        <EncuestaAlumno
-          idAsesoria={asesoriaSeleccionada.idAsesoria}
-          matricula={matricula}
-          onClose={() => {
-            setMostrarEncuesta(false);
-            setAsesoriaSeleccionada(null);
-          }}
-        />
-)}
+
+        {/* 5) Modal de encuesta */}
+        {mostrarEncuesta && asesoriaSeleccionada && (
+          <EncuestaAlumno
+            idAsesoria={asesoriaSeleccionada.idAsesoria}
+            matricula={matricula}
+            onClose={() => {
+              setMostrarEncuesta(false);
+              setAsesoriaSeleccionada(null);
+              cargarCompletadas(); // << refresca aquí para deshabilitar botón
+            }}
+          />
+        )}
       </div>
     </div>
   );
