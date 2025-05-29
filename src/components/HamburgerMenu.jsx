@@ -25,7 +25,8 @@ export default function HamburgerMenu({role}) {
       {label: "Alumnos", path: "/administrador/alumnos"},
       {label: "Encuestas", path: "/administrador/encuestas"},
       {label: "Material de apoyo", path: "/administrador/material"},
-      {label: "Materias y temas", path: "/administrador/materia"}
+      {label: "Materias y temas", path: "/administrador/materia"},
+      {label: "Perfil", path: "/administrador/admins"}
 
     ],
   };

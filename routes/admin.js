@@ -28,6 +28,75 @@ router.get('/asesorias', (req, res) => {
     });
 });
 
+router.get('/perfil', (req, res) => {
+    db.query('SELECT matricula, nombre, email, password FROM Administrador', (err, results) => {
+        if (err) {
+            console.error('Error al obtener administradores:', err);
+            return res.status(500).json({ error: 'Error al consultar la base de datos' });
+        }
+
+        res.json(results);
+    });
+});
+router.post('/admins', (req, res) => {
+    const { matricula, nombre, email, password } = req.body;
+
+    if (!matricula || !nombre || !email || !password) {
+        return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+    }
+
+    const sql = 'INSERT INTO Administrador (matricula, nombre, email, password) VALUES (?, ?, ?, ?)';
+    const values = [matricula, nombre, email, password];
+
+    db.query(sql, values, (err, result) => {
+        if (err) {
+            console.error('Error al insertar administrador:', err);
+            return res.status(500).json({ error: 'Error al guardar en la base de datos' });
+        }
+
+        res.status(201).json({ message: 'Administrador agregado correctamente' });
+    });
+});
+router.get('/perfil/:matricula', (req, res) => {
+    const { matricula } = req.params;
+
+    db.query('SELECT matricula, nombre, email, password FROM Administrador WHERE matricula = ?', [matricula], (err, results) => {
+        if (err) {
+            console.error('Error al obtener perfil del administrador:', err);
+            return res.status(500).json({ error: 'Error al consultar la base de datos' });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'Administrador no encontrado' });
+        }
+
+        res.json(results[0]); // Devolver solo el objeto, no un arreglo
+    });
+});
+
+// En routes/admin/perfil.js o similar
+router.put('/perfil/:matricula', (req, res) => {
+    const { nombre, email, password } = req.body;
+    const { matricula } = req.params;
+
+    if (!nombre || !email || !password) {
+        return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+    }
+
+    const sql = 'UPDATE Administrador SET nombre = ?, email = ?, password = ? WHERE matricula = ?';
+    const values = [nombre, email, password, matricula];
+
+    db.query(sql, values, (err, result) => {
+        if (err) {
+            console.error('Error al actualizar administrador:', err);
+            return res.status(500).json({ error: 'Error al actualizar en la base de datos' });
+        }
+
+        res.json({ message: 'Administrador actualizado correctamente' });
+    });
+});
+
+
 
 router.get('/asesores', (req, res) => {
     db.query('SELECT matricula, nombre, email AS correo FROM asesor', (err, results) => {
@@ -50,7 +119,7 @@ router.post('/asesores', (req, res) => {
 
     if (!matricula || !nombre || !email || !password) {
         return res.status(400).json({ error: 'Faltan campos requeridos' });
-    } 
+    }
     const sql = 'INSERT INTO Asesor (matricula, nombre, email, password) VALUES (?, ?, ?, ?)';
     db.query(sql, [matricula, nombre, email, password], (err, result) => {
         if (err) {

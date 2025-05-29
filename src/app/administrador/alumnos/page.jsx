@@ -25,7 +25,7 @@ const filteredalumnoes = alumnosData.filter((alumno) =>
 );
 
 return (
-    <div className="flex h-screen relative">
+    <div className="flex h-screen relative text-black">
         <aside className="bg-[#212227] w-20 flex flex-col items-center py-4">
             <HamburgerMenu  role="administrador"/>
         </aside>
