@@ -26,6 +26,7 @@ export default function HistorialPage() {
     fetch(`http://localhost:3001/api/alumno/asesorias/completadas?matricula=${matricula}`)
       .then(res => res.json())
       .then(data => {
+        console.log("Respuesta del backend:", data);
         if (Array.isArray(data)) {
           setCompletadas(data);
           setCompletadasPendientes(data.filter(a => Number(a.contestada) === 0));

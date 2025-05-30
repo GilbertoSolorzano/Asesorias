@@ -4,6 +4,8 @@ import axios from 'axios'; // Asegúrate de tener axios importado
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js';
 import { useEffect, useState } from 'react';
 import { Pie } from 'react-chartjs-2';
+import ChatModal from '@/components/ChatModal';
+
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -12,6 +14,9 @@ export default function AsesoriasFinalizadas() {
   const [graficaData, setGraficaData] = useState({});
   const [modalVisible, setModalVisible] = useState(false);
   const [datosEncuesta, setDatosEncuesta] = useState({ alumno: [], asesor: [] });
+  const [mensajesChat, setMensajesChat] = useState([]);
+  const [chatVisible, setChatVisible] = useState(false);
+
   
   const abrirModal = async (idAsesoria) => {
     try {
@@ -23,6 +28,18 @@ export default function AsesoriasFinalizadas() {
       alert('Error al cargar las encuestas');
     }
   };
+  const abrirChat = async (idAsesoria) => {
+  try {
+    const res = await axios.get(`http://localhost:3001/api/alumno/mensajes/${idAsesoria}`);
+    setMensajesChat(res.data);
+    setChatVisible(true);
+  } catch (error) {
+    console.error('Error al cargar mensajes:', error);
+    alert('Error al obtener mensajes del chat.');
+  }
+  };
+
+
   
   // Función para agrupar por materia y contar las asesorías
   const agruparPorMateria = (datos) => {
@@ -117,7 +134,10 @@ export default function AsesoriasFinalizadas() {
                       </button>
                       </td>
                       <td className="py-2 px-4">
-                        <button className="bg-orange-500 hover:bg-green-600 text-white font-bold py-1 px-4 rounded-full">
+                        <button
+                          onClick={() => abrirChat(asesor.idAsesoria)} 
+                          className="bg-orange-500 hover:bg-green-600 text-white font-bold py-1 px-4 rounded-full"
+                        >
                           Ver
                         </button>
                       </td>
@@ -130,7 +150,7 @@ export default function AsesoriasFinalizadas() {
         </div>
       </div>
       {modalVisible && (
-  <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50 px-4">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50 px-4">
     <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[85vh] overflow-y-auto p-8 relative animate-fade-in-up">
       
       <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b pb-2">Encuesta del Alumno</h2>
@@ -176,8 +196,14 @@ export default function AsesoriasFinalizadas() {
         </button>
       </div>
     </div>
+
   </div>
 )}
+      <ChatModal
+        visible={chatVisible}
+        onClose={() => setChatVisible(false)}
+        mensajes={mensajesChat}
+      />
 
   
     </div>
