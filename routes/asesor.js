@@ -94,6 +94,106 @@ router.get('/asesorias/asesorias-finalizadas', (req, res) => {
         res.json(results);
     });
 });
+router.get('/asesorias/completadas', (req, res) => {
+  const { matricula } = req.query;
+  if (!matricula) {
+    return res.status(400).json({ error: 'Matrícula requerida' });
+  }
+
+  const sql = `
+    SELECT
+      a.idAsesoria,
+      m.nombreMateria AS materia,
+      t.nombreTema    AS tema,
+      a.matriculaAsesor,
+      al.nombre       AS nombreAlumno,
+      a.fecha_acordada AS fechaAtendida,
+      COALESCE(e.contestada, 0) AS contestada
+    FROM Asesoria a
+    LEFT JOIN Encuesta e
+      ON a.idAsesoria = e.idAsesoria AND e.tipoEncuesta = 'alumno'
+    JOIN Tema t    ON a.idTema = t.idTema
+    JOIN Materia m ON t.idMateria = m.idMateria
+    JOIN Alumno al ON a.matriculaAlumno = al.matricula
+    WHERE a.matriculaAsesor = ?
+      AND a.estado = 4;
+
+  `;
+
+  db.query(sql, [matricula], (err, results) => {
+    if (err) {
+      console.error('Error al obtener completadas:', err);
+      return res.status(500).json({ error: 'Error del servidor' });
+    }
+    res.json(results);
+  });
+});
+router.get('/preguntas/asesor', async (req, res) => {
+  try {
+    const [preguntas] = await db.promise().query(
+      `SELECT idPregunta, enunciado
+       FROM PreguntaEncuesta
+       WHERE tipoEncuesta = 'asesor'`
+    );
+    res.json(preguntas);
+  } catch (error) {
+    console.error('Error al obtener preguntas del asesor:', error);
+    res.status(500).json({ mensaje: 'Error al obtener preguntas del asesor' });
+  }
+});
+router.post('/encuesta/asesor', async (req, res) => {
+  const { idAsesoria, matriculaRespondente, respuestas } = req.body;
+  const arr = Array.isArray(respuestas) ? respuestas : Object.values(respuestas);
+
+  if (!idAsesoria || !matriculaRespondente || arr.length === 0) {
+    return res.status(400).json({ error: 'Datos o respuestas faltantes.' });
+  }
+
+  try {
+    // 1) Upsert en Encuesta con tipo 'asesor'
+    await db.promise().query(
+      `INSERT INTO Encuesta (idAsesoria, tipoEncuesta)
+       VALUES (?, 'asesor')
+       ON DUPLICATE KEY UPDATE idEncuesta = LAST_INSERT_ID(idEncuesta)`,
+      [idAsesoria]
+    );
+
+    // 2) Obtener idEncuesta recién insertado o existente
+    const [[{ id }]] = await db.promise().query('SELECT LAST_INSERT_ID() AS id');
+    const idEncuesta = id;
+
+    // 3) Insertar todas las respuestas
+    const values = arr.map(r => [
+      idEncuesta,
+      r.idPregunta,
+      matriculaRespondente,
+      r.respuesta
+    ]);
+
+    await db.promise().query(
+      `INSERT INTO RespuestaEncuesta
+         (idEncuesta, idPregunta, matriculaRespondente, respuesta)
+       VALUES ?`,
+      [values]
+    );
+
+    // 4) Marcar encuesta como contestada
+    await db.promise().query(
+      `UPDATE Encuesta
+         SET contestada = 1
+       WHERE idEncuesta = ?`,
+      [idEncuesta]
+    );
+
+    // 5) Éxito
+    return res.status(201).json({ message: 'Respuestas guardadas' });
+
+  } catch (error) {
+    console.error('Error guardando encuesta del asesor:', error.code, error.sqlMessage || error.message);
+    return res.status(500).json({ error: 'Fallo al guardar encuesta del asesor.' });
+  }
+});
+
 
 //Datos perfil Asesor
 router.get('/asesorias/perfil-asesor', (req, res) => {

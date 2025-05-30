@@ -1,14 +1,20 @@
 'use client'
-import AsesorCard from '@/components/AsesorCard'
+import AsesorCardCompleted from '@/components/AsesorCardComplete'
 import AsesorDataGraph from '@/components/AsesorDataGraph'
+import ChatModal from "@/components/ChatModal"
+import EncuestaAsesor from '@/components/EncuestaAsesor'
 import HamburgerMenu from '@/components/HamburgerMenu'
 import { useEffect, useState } from 'react'
-import ChatModal from "@/components/ChatModal"; 
 
 export default function HistorialPage() {
   const [matricula, setMatricula] = useState(null);
   const [asesoriaTerminada, setAsesoriaTerminada] = useState([])
   const [idChatAsesoria, setIdChatAsesoria] = useState(null);
+  const [mostrarEncuesta, setMostrarEncuesta] = useState(false);
+  const [completadas, setCompletadas] = useState([]);
+  const [completadasPendientes, setCompletadasPendientes] = useState([]);
+  const [asesoriaSeleccionada, setAsesoriaSeleccionada] = useState(null);
+
   const [mensajes, setMensajes] = useState([]);
   const [mostrarChat, setMostrarChat] = useState(false);
 
@@ -22,70 +28,95 @@ export default function HistorialPage() {
     }
   }, []);
 
-  useEffect(() => {
-    if (!matricula) return
-    const fetchAsesorias = async () => {
-        try {
-            const res = await fetch(`http://localhost:3001/api/asesor/asesorias/asesorias-finalizadas?matricula=${matricula}`);
-            if (!res.ok) {
-                throw new Error(`Error al cargar asesorías finalizadas: ${res.status} - ${res.statusText}`);
-            }
-            const data = await res.json();
-            setAsesoriaTerminada(data);
-        } catch (error) {
-            console.error('Error al cargar asesorías finalizadas:', error);
+  const cargarCompletadas = () => {
+    if (!matricula) return;
+    fetch(`http://localhost:3001/api/asesor/asesorias/completadas?matricula=${matricula}`)
+      .then(res => res.json())
+      .then(data => {
+        console.log("Respuesta del backend:", data);
+        if (Array.isArray(data)) {
+          setCompletadas(data);
+          setCompletadasPendientes(data.filter(a => Number(a.contestada) === 0));
+        } else {
+          console.error('Respuesta inesperada:', data);
         }
-    };
+      })
+      .catch(console.error);
+  };
+  useEffect(() => {
+    cargarCompletadas();
+  }, [matricula]);
 
-    fetchAsesorias();
-}, [matricula]);
   return (
     <div className="flex flex-col md:flex-row h-screen">
       <aside className="bg-[#212227] w-full md:w-20 flex flex-col items-center py-4 md:h-full min-h-[60px]">
         <HamburgerMenu role="asesor" />
       </aside>
-  
-      <main className="flex-1 overflow-y-auto flex-col items-center bg-white w-full h-full">
+      <div className="flex-1 p-8">
+        <header className="text-center mb-8">
+          <h1 className="text-2xl font-bold text-zinc-950">
+            Historial de Asesorías Completadas
+          </h1>
+        </header>
         <div className="w-full h-64 sm:h-80 md:h-96 mb-6 flex items-center justify-center">
           <AsesorDataGraph matricula={matricula} />
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 w-full justify-center gap-4 p-4 overflow-y-auto">
-          {asesoriaTerminada.map( (at, index) => (
-            <AsesorCard
-              key={index}
-              tema={at.tema}
-              nombre={at.nombreAlumno}
-              fecha={new Date(at.fecha).toLocaleString('es-MX', {
-                dateStyle: 'medium',
-                timeStyle: 'short'
-              })}
-              status="Finalizada" // si deseas mostrar un estado fijo
-                  onMensaje={() => {
-                    setIdChatAsesoria(at.idAsesoria);
-                    fetch(`http://localhost:3001/api/alumno/mensajes/${at.idAsesoria}`)
-                      .then(res => res.json())
-                      .then(data => {
-                        setMensajes(data);
-                        setMostrarChat(true);
-                      })
-                      .catch(err => {
-                        console.error("Error al cargar mensajes:", err);
-                        setMensajes([]);
-                        setMostrarChat(true);
-                      });
+        {completadas.length === 0 ? (
+                  <p className="text-gray-500">
+                    No tienes asesorías completadas aún.
+                  </p>
+                ) : (
+                  <div className="grid grid-cols-3 gap-8">
+                    {completadas.map((c) => (
+                      <AsesorCardCompleted
+                        key={c.idAsesoria}
+                        materia={c.materia}
+                        tema={c.tema}
+                        nombreAlumno={c.nombreAlumno}
+                        fechaAtendida={c.fechaAtendida}
+                        onVerChat={() => {
+                          setIdChatAsesoria(c.idAsesoria);
+                          fetch(`http://localhost:3001/api/alumno/mensajes/${c.idAsesoria}`)
+                            .then(res => res.json())
+                            .then(data => {
+                              setMensajes(data);
+                              setMostrarChat(true);
+                            })
+                            .catch(err => {
+                              console.error("Error al cargar mensajes:", err);
+                              setMensajes([]);
+                              setMostrarChat(true);
+                            });
+                        }}
+        
+                        onEncuesta={() => {
+                          setAsesoriaSeleccionada(c);
+                          setMostrarEncuesta(true);
+                        }}
+                        contestada={c.contestada === 1}
+                      />
+                    ))}
+                  </div>
+                )}
+      {mostrarEncuesta && asesoriaSeleccionada && (
+                <EncuestaAsesor
+                  idAsesoria={asesoriaSeleccionada.idAsesoria}
+                  matricula={matricula}
+                  onClose={() => {
+                    setMostrarEncuesta(false);
+                    setAsesoriaSeleccionada(null);
+                    cargarCompletadas(); // << refresca aquí para deshabilitar botón
                   }}
-
-            />
-          ))}
-        </div>
-      </main>
-      {mostrarChat && (
-      <ChatModal
-          visible={mostrarChat}
-          mensajes={mensajes}
-          onClose={() => setMostrarChat(false)}
-        />
-      )}
+                />
+              )}
+            </div>
+            {mostrarChat && (
+              <ChatModal
+                visible={mostrarChat}
+                mensajes={mensajes}
+                onClose={() => setMostrarChat(false)}
+              />
+            )}
 
     </div>
   )
