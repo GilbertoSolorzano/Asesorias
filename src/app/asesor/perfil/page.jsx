@@ -1,7 +1,7 @@
 'use client'
-import HamburgerMenu from '@/components/HamburgerMenu'
-import React, { useState, useEffect } from 'react'
+import HamburgerMenu from '@/components/HamburgerMenu';
 import { Eye, EyeOff } from "lucide-react";
+import { useEffect, useState } from 'react';
 
 const PerfilPage = () => {
   const [matricula, setMatricula] = useState(null);
@@ -51,6 +51,7 @@ const PerfilPage = () => {
   }, []);
 
   useEffect(() => {
+    if (!matricula) return;
     const fetchMateriasAsignadas = async () => {
       try {
         const res = await fetch(`http://localhost:3001/api/asesor/materias-asignadas?matricula=${matricula}`);
@@ -124,6 +125,7 @@ const PerfilPage = () => {
 
   }
   useEffect(() => {
+    if (!matricula) return;
     const fetchPerfil = async () => {
       try {
         const res = await fetch(`http://localhost:3001/api/asesor/asesorias/perfil-asesor?matricula=${matricula}`);
