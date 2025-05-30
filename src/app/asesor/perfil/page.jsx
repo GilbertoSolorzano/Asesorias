@@ -369,8 +369,12 @@ const PerfilPage = () => {
                   <button
                     className="px-4 py-2 rounded bg-green-500 text-white hover:bg-green-600"
                     onClick={() => {
-                      console.log('Materias seleccionadas:', materiasSeleccionadas);
-                      handleGuardarMaterias();
+                      try{
+                        console.log('Materias seleccionadas:', materiasSeleccionadas);
+                        handleGuardarMaterias();
+                      } catch (error){
+                        console.error('Error al guardar las materias:', error);
+                      }
                     }}
                   >
                     Guardar
