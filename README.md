@@ -38,6 +38,20 @@ Un sistema de asesorías desarrollado en React (.jsx) que permite gestionar, pro
 
 - **Node.js** (versión recomendada 14 o superior)
 
+```bash
+node -v
+```
+
+npm (gestor de paquetes de Node.js)
+
+```bash
+npm -v
+```
+
+## Motor de base de datos: MariaDB
+
+Se utiliza el motor de base de datos MariaDB, instalando desde su sitio oficial - https://mariadb.com/downloads/ - la version mas reciente.
+
 ### Clonar el Repositorio
 
 ```bash
