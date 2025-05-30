@@ -42,7 +42,7 @@ Un sistema de asesorías desarrollado en React (.jsx) que permite gestionar, pro
 node -v
 ```
 
-npm (gestor de paquetes de Node.js)
+- **npm** (gestor de paquetes de Node.js)
 
 ```bash
 npm -v
@@ -51,6 +51,7 @@ npm -v
 ## Motor de base de datos: MariaDB
 
 Se utiliza el motor de base de datos MariaDB, instalando desde su sitio oficial - https://mariadb.com/downloads/ - la version mas reciente.
+Una vez que MariaDB este instalado, se ejecutara pegara en la terminal de MariaDB el scrip de la base de datos llamado base.sql que se encuentra dentro de la carpeta: src/base/base.sql
 
 ### Clonar el Repositorio
 
@@ -79,8 +80,6 @@ Npm install socket.io
 Npm install socket.io-client
 
 ```
-
-### Pasos
 
 ## Integrantes
 
