@@ -2,7 +2,7 @@
 
 export default function AsesorCard({ tema, nombre, fecha, status, onMensaje }) {
   return (
-    <div className="items-center justify-center  border rounded-lg p-4 bg-[#66D575] shadow-md">
+    <div className="items-center justify-center h-[125px] border rounded-lg p-4 bg-[#66D575] shadow-md">
       <h3 className="text-xs font-bold text-center"> {nombre}</h3>
       <p className="text-xs text-center">Tema: {tema}</p>
       <p className="text-xs text-center">Fecha: {fecha}</p>
