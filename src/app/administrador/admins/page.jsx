@@ -45,7 +45,7 @@ export default function PerfilAdminPage() {
             setNuevoEmail(resAdmin.data.email);
             setNuevoPassword(resAdmin.data.password);
 
-
+// carga todos los perfiles admins
             const resTodos = await axios.get(`http://localhost:3001/api/admin/perfil`);
             setAdmins(resTodos.data);
         } catch (err) {
@@ -120,7 +120,7 @@ export default function PerfilAdminPage() {
                 <form
                 onSubmit={async (e) => {
                     e.preventDefault();
-                    try {
+                    try {//actualiza el perfil en curso
                     await axios.put(`http://localhost:3001/api/admin/perfil/${matricula}`, {
                         nombre: nuevoNombre,
                         email: nuevoEmail,
