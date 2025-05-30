@@ -148,8 +148,8 @@ https://docs.google.com/document/d/1o4_a_QTBeOQzPa2O9d0kDBcY0RzdIIDjAMFDh4gXStw/
 
 #### Flores Hernandez Roberto David - al22760241@ite.edu.mx
 
-#### Heredia Andrey Victor Felipe - Al22760587@ite.edu.mx
+#### Heredia Andrey Victor Felipe - al22760587@ite.edu.mx
 
 #### Reyes Bojorquez Daniel Ulises - al22760594@ite.edu.mx
 
-#### Solorzano Galvez Gilberto Jesus -
+#### Solorzano Galvez Gilberto Jesus - al22760235@ite.edu.mx
