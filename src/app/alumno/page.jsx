@@ -76,16 +76,16 @@ export default function HomePage() {
     cargarAsesorias();
   };
 
-  const abrirChat = async (asesoriaId,nombreAsesor) => {
+  const abrirChat = async (asesoriaId, nombreAsesor) => {
     try {
       const res = await fetch(`http://localhost:3001/api/alumno/mensajes/${asesoriaId}`);
       const contentType = res.headers.get("content-type");
       if (!res.ok) {
-        console.error("Respuesta de error del servidor:", await res.text());
+        console.error("Error servidor:", await res.text());
         return;
       }
-      if (!contentType || !contentType.includes("application/json")) {
-        console.error("Respuesta no es JSON:", await res.text());
+      if (!contentType?.includes("application/json")) {
+        console.error("Respuesta no JSON:", await res.text());
         return;
       }
       const data = await res.json();
@@ -94,22 +94,22 @@ export default function HomePage() {
         setChatRoom(asesoriaId);
         setChatVisible(true);
         setNombreAsesor(nombreAsesor);
-      } else {
-        console.error("Formato inesperado:", data);
-      }
+      } else console.error("Formato inesperado:", data);
     } catch (error) {
-      console.error("Error al cargar mensajes del chat:", error);
+      console.error("Error al cargar chat:", error);
     }
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      <aside className="bg-[#212227] w-20 flex flex-col items-center py-4">
+    <div className="flex flex-col sm:flex-row min-h-screen bg-gray-100">
+      {/* Sidebar hidden on mobile */}
+      <aside className="hidden sm:flex bg-[#212227] sm:w-20 flex-col items-center py-4">
         <HamburgerMenu role="alumno" />
       </aside>
 
-      <main className="flex-1 p-8">
-        <header className="mb-8 flex items-center px-4">
+      <main className="flex-1 p-4 sm:p-8">
+        <header className="mb-6 flex flex-col sm:flex-row items-center px-2 sm:px-4">
+          <HamburgerMenu className="sm:hidden self-start mb-2" role="alumno" />
           <h5 className="flex-1 text-center text-2xl font-bold text-zinc-950">
             Bienvenido, Alumno
           </h5>
@@ -119,7 +119,7 @@ export default function HomePage() {
               setAsesoriaEditando(null);
               setIsModalOpen(true);
             }}
-            className="flex flex-col items-center mr-4 mt-4 cursor-pointer"
+            className="flex flex-col items-center cursor-pointer mt-4 sm:mt-0 sm:ml-4"
           >
             <CirclePlus className="w-10 h-10 text-blue-500" />
             <span className="text-sm text-gray-600 mt-1">Agregar solicitud</span>
@@ -131,7 +131,7 @@ export default function HomePage() {
           {pendientes.length === 0 ? (
             <p className="text-black">No tienes solicitudes pendientes.</p>
           ) : (
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {pendientes.map((a) => (
                 <AsesorCardPending
                   key={a.idAsesoria}
@@ -151,36 +151,34 @@ export default function HomePage() {
           {aceptadas.length === 0 ? (
             <p className="text-black">No tienes solicitudes aceptadas.</p>
           ) : (
-            <div className="grid grid-cols-3 gap-4">
-  {aceptadas.map((a) => {
-    console.log(a);
-    return (
-      <div
-        key={a.idAsesoria}
-        className="bg-blue-500 text-black p-4 rounded-lg shadow-md"
-      >
-        <h3 className="text-lg font-bold mb-1">{a.nombreMateria}</h3>
-        <p className="text-sm">Tema: {a.nombreTema}</p>
-        <p className="text-sm">Lugar: {a.lugar}</p>
-        <p className="text-sm">Fecha: {new Date(a.fecha_creacion).toLocaleString()}</p>
-        <p className="text-sm">Asesor: {a.nombreAsesor}</p>
-        <button
-          onClick={() => abrirChat(a.idAsesoria, a.nombreAsesor)}
-          className="mt-2 bg-white text-blue-500 px-3 py-1 rounded hover:bg-blue-100"
-        >
-          Mensaje
-        </button>
-      </div>
-    );
-  })}
-</div>
-
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {aceptadas.map((a) => (
+                <div
+                  key={a.idAsesoria}
+                  className="bg-blue-500 text-black p-4 rounded-lg shadow-md"
+                >
+                  <h3 className="text-lg font-bold mb-1">{a.nombreMateria}</h3>
+                  <p className="text-sm">Tema: {a.nombreTema}</p>
+                  <p className="text-sm">Lugar: {a.lugar}</p>
+                  <p className="text-sm">
+                    Fecha: {new Date(a.fecha_creacion).toLocaleString()}
+                  </p>
+                  <p className="text-sm">Asesor: {a.nombreAsesor}</p>
+                  <button
+                    onClick={() => abrirChat(a.idAsesoria, a.nombreAsesor)}
+                    className="mt-2 bg-white text-blue-500 px-3 py-1 rounded hover:bg-blue-100 w-full"
+                  >
+                    Mensaje
+                  </button>
+                </div>
+              ))}
+            </div>
           )}
         </section>
       </main>
 
       {chatVisible && chatRoom && (
-        <div className="fixed bottom-4 right-4 w-[350px] h-[500px] bg-white rounded-lg shadow-lg z-50 p-4">
+        <div className="fixed bottom-4 right-4 w-[90vw] max-w-xs sm:w-[350px] sm:h-[500px] bg-white rounded-lg shadow-lg z-50 p-4">
           <button
             onClick={() => setChatVisible(false)}
             className="absolute top-2 right-2 text-gray-700 hover:text-red-500 font-bold"
@@ -199,13 +197,12 @@ export default function HomePage() {
 
       {isModalOpen && (
         <div className="fixed inset-0 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-[80%] max-w-2xl">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-[90vw] sm:w-[80%] max-w-lg sm:max-w-2xl">
             <CrearAsesoriaModal
               onClose={handleCloseModal}
               matriculaAlumno={matricula}
               modoEdicion={isEditMode}
               asesoriaInicial={asesoriaEditando}
-
             />
           </div>
         </div>
