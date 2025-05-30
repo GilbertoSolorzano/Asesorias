@@ -19,6 +19,10 @@ const AsesorPage = () => {
   const [solicitudes, setSolicitudes] = useState([]);
   const [chatRoom, setChatRoom] = useState(null);
   const [chatMessages, setChatMessages] = useState([]);
+  const [nombreAlumno, setNombreAlumno] = useState('');
+  const [chatVisible, setChatVisible] = useState(false);
+
+
   // Leer la matricula del localStorage
   useEffect(() => {
     const m = sessionStorage.getItem('matricula');
@@ -88,12 +92,14 @@ const AsesorPage = () => {
       alert('No se pudo finalizar la asesoría');
     }
   };
-  const abrirChat = async (asesoriaId) => {
+  const abrirChat = async (asesoriaId,alumnoNombre) => {
     try {
       const res = await fetch(`http://localhost:3001/api/alumno/mensajes/${asesoriaId}`);
       const data = await res.json();
       setChatMessages(data);
       setChatRoom(asesoriaId);
+      setNombreAlumno(alumnoNombre);
+      setChatVisible(true); 
     } catch (error) {
       console.error("Error al cargar mensajes del chat:", error);
     }
@@ -154,7 +160,7 @@ const AsesorPage = () => {
                   })
                   setIsModificarModalOpen(true)
                 }}
-                onClickChat={() => abrirChat(a.idAsesoria)}
+                onClickChat={() => abrirChat(a.idAsesoria,a.nombreAlumno)}
               />
             ))}
           </div>
@@ -211,22 +217,21 @@ const AsesorPage = () => {
       </main>
 
       {/* Chat */}
-      {chatRoom && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg shadow-lg max-w-xl w-full h-[80vh] p-4 relative">
-            <button
-              onClick={() => setChatRoom(null)}
-              className="absolute top-2 right-2 text-gray-700 hover:text-red-500 font-bold"
-            >
-              X
-            </button>
-            <ChatWidget
-              room={chatRoom}
-              user={matricula} // <-- asegúrate que `matricula` no sea null
-              initialMessages={chatMessages}
-              onClose={() => setChatRoom(null)}
-            />
-          </div>
+      {chatVisible && chatRoom && (
+        <div className="fixed bottom-4 right-4 w-[350px] h-[500px] bg-white rounded-lg shadow-lg z-50 p-4">
+          <button
+            onClick={() => setChatVisible(false)}
+            className="absolute top-2 right-2 text-gray-700 hover:text-red-500 font-bold"
+          >
+            X
+          </button>
+          <ChatWidget
+            room={chatRoom}
+            user={matricula}
+            initialMessages={chatMessages}
+            nombreOtroUsuario={nombreAlumno}
+            onClose={() => setChatVisible(false)}
+          />
         </div>
       )}
 
