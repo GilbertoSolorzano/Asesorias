@@ -17,6 +17,7 @@ export default function HomePage() {
   const [chatRoom, setChatRoom] = useState(null);
   const [chatVisible, setChatVisible] = useState(false);
   const [chatMessages, setChatMessages] = useState([]);
+  const [nombreAsesor, setNombreAsesor] = useState('');
 
   useEffect(() => {
     const m = sessionStorage.getItem("matricula");
@@ -75,7 +76,7 @@ export default function HomePage() {
     cargarAsesorias();
   };
 
-  const abrirChat = async (asesoriaId) => {
+  const abrirChat = async (asesoriaId,nombreAsesor) => {
     try {
       const res = await fetch(`http://localhost:3001/api/alumno/mensajes/${asesoriaId}`);
       const contentType = res.headers.get("content-type");
@@ -92,6 +93,7 @@ export default function HomePage() {
         setChatMessages(data);
         setChatRoom(asesoriaId);
         setChatVisible(true);
+        setNombreAsesor(nombreAsesor);
       } else {
         console.error("Formato inesperado:", data);
       }
@@ -163,7 +165,7 @@ export default function HomePage() {
         <p className="text-sm">Fecha: {new Date(a.fecha_creacion).toLocaleString()}</p>
         <p className="text-sm">Asesor: {a.nombreAsesor}</p>
         <button
-          onClick={() => abrirChat(a.idAsesoria)}
+          onClick={() => abrirChat(a.idAsesoria, a.nombreAsesor)}
           className="mt-2 bg-white text-blue-500 px-3 py-1 rounded hover:bg-blue-100"
         >
           Mensaje
@@ -189,6 +191,7 @@ export default function HomePage() {
             room={chatRoom}
             user={matricula}
             initialMessages={chatMessages}
+            nombreOtroUsuario={nombreAsesor}
             onClose={() => setChatVisible(false)}
           />
         </div>
@@ -202,6 +205,7 @@ export default function HomePage() {
               matriculaAlumno={matricula}
               modoEdicion={isEditMode}
               asesoriaInicial={asesoriaEditando}
+
             />
           </div>
         </div>

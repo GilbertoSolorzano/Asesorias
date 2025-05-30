@@ -5,7 +5,7 @@ import { io } from "socket.io-client";
 
 const socket = io("http://localhost:3001"); // asegúrate que coincide con tu backend
 
-export default function ChatWidget({ room, user, initialMessages = [], onClose }) {
+export default function ChatWidget({ room, user, initialMessages = [], onClose, nombreOtroUsuario}) {
   const [messages, setMessages] = useState(initialMessages);
   const [mensaje, setMensaje] = useState("");
   const messagesEndRef = useRef(null);
@@ -47,7 +47,7 @@ export default function ChatWidget({ room, user, initialMessages = [], onClose }
   return (
     <div className="flex flex-col h-full bg-white rounded-lg shadow-md border border-gray-300">
       <div className="bg-blue-600 text-white text-center py-2 rounded-t-lg font-semibold">
-        Chat #{room}
+        Conversación con {nombreOtroUsuario || `#${room}`}
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-2 bg-gray-50">
