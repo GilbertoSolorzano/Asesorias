@@ -31,7 +31,7 @@ const AsesorPage = () => {
 
   //Fetch de las solicitudes
   useEffect(() => {
-    if (!matricula) return; 
+    if (!matricula) return;
     const fetchSolicitudes = async () => {
       try {
         const res = await fetch(`http://localhost:3001/api/asesor/asesorias/solicitud?matricula=${matricula}`);
@@ -53,6 +53,8 @@ const AsesorPage = () => {
 
   //Fetch de las asesorias activas
   useEffect(() => {
+    if (!matricula) return;
+
     const fetchAsesorias = async () => {
       try {
         const res = await fetch(`http://localhost:3001/api/asesor/asesorias/activas?matricula=${matricula}`);
