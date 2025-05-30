@@ -147,7 +147,6 @@ router.post('/asesorias/finalizar-asesoria', (req, res) => {
 
 //Aceptar o programar una asesoria
 router.post('/asesorias/aceptar-asesoria', (req, res) => {
-    console.log("💡 body recibido en POST /aceptar-asesoria:", req.body);
     const { idAsesoria, matriculaAsesor } = req.body;
 
     if (!idAsesoria || !matriculaAsesor) {
@@ -166,7 +165,6 @@ router.post('/asesorias/aceptar-asesoria', (req, res) => {
         console.error('Error al aceptar la asesoría:', err);
         return res.status(500).json({ error: 'Error al actualizar la base de datos' });
         }
-        res.json({ message: 'Asesoría aceptada y asesor asignado correctamente', results });
         res.json({ message: 'Asesoría aceptada y asesor asignado correctamente' });
     });
 });
