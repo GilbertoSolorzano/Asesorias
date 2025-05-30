@@ -19,7 +19,7 @@ export default function HomePage() {
   const [chatMessages, setChatMessages] = useState([]);
 
   useEffect(() => {
-    const m = localStorage.getItem("matricula");
+    const m = sessionStorage.getItem("matricula");
     setMatricula(m);
   }, []);
 
