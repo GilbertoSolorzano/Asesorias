@@ -1,14 +1,14 @@
 'use client'
-import React, { useEffect, useState } from 'react'
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
+    BarElement,
+    CategoryScale,
+    Chart as ChartJS,
+    Legend,
+    LinearScale,
+    Title,
+    Tooltip
 } from 'chart.js'
+import { useEffect, useState } from 'react'
 import { Bar } from 'react-chartjs-2'
 
 // Registrar lo necesario
@@ -18,6 +18,7 @@ const AsesorDataGraph = ({matricula: matriculaAsesor}) => {
     const [data, setData] = useState(null);
 
     useEffect(() => {
+        if (!matriculaAsesor) return; 
         const fetchGraphData = async () =>{
             try {
                 const res = await fetch(`http://localhost:3001/api/asesor/graficar-asesorias?matricula=${matriculaAsesor}`);
