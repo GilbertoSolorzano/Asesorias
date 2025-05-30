@@ -214,4 +214,107 @@ router.put('/cambiar-contrasena', (req, res) => {
     });
 });
 
+//Route para la accion de modificar una Asesoria
+router.put('/asesorias/modificar', (req, res) => {
+    const { idAsesoria, fecha_acordada, lugar } = req.body;
+
+    if (!idAsesoria || !fecha_acordada || !lugar) {
+        return res.status(400).json({ error: 'Faltan datos por introducir' });
+    }
+
+    const sql = `
+        UPDATE Asesoria
+        SET fecha_acordada = ?, lugar = ?
+        WHERE idAsesoria = ?
+    `;
+
+    db.query(sql, [fecha_acordada, lugar, idAsesoria], (err, results) => {
+        if (err) {
+            console.error(`Error al modificar la asesoría ${idAsesoria}:`, err);
+            return res.status(500).json({ error: `Error al modificar la asesoría ${idAsesoria}` });
+        }
+
+        res.json({ message: 'Asesoría actualizada correctamente' });
+    });
+});
+
+//Obtiene todas las materias
+router.get('/materias-disponibles', (req, res) => {
+  const sql = `SELECT idMateria, nombreMateria FROM Materia`;
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error('Error al obtener materias:', err);
+      return res.status(500).json({ error: 'Error al consultar la base de datos' });
+    }
+    res.json(results);
+  });
+});
+
+//Obtiene las materias asignadas a un asesor
+router.get('/materias-asignadas', (req, res) => {
+  const { matricula } = req.query;
+  if (!matricula) {
+    return res.status(400).json({ error: 'Matrícula no proporcionada' });
+  }
+
+  const sql = `
+    SELECT m.idMateria, m.nombreMateria
+    FROM Materia m
+    JOIN AsesorMateria am ON m.idMateria = am.idMateria
+    WHERE am.matriculaAsesor = ?
+  `;
+  db.query(sql, [matricula], (err, results) => {
+    if (err) {
+      console.error('Error al obtener materias del asesor:', err);
+      return res.status(500).json({ error: 'Error al consultar la base de datos' });
+    }
+    res.json(results);
+  });
+});
+
+//Agrega una materia a un asesor
+router.post('/agregar-materia-asesor', (req, res) => {
+  const { matricula, materias } = req.body;
+
+  if (!matricula || !Array.isArray(materias) || materias.length === 0) {
+    return res.status(400).json({ error: 'Faltan datos requeridos' });
+  }
+
+  // Prepara valores para inserción múltiple
+  const values = materias.map(idMateria => [matricula, idMateria]);
+
+  const sql = `
+    INSERT IGNORE INTO AsesorMateria (matriculaAsesor, idMateria)
+    VALUES ?
+  `;
+
+  db.query(sql, [values], (err, results) => {
+    if (err) {
+      console.error('Error al agregar materias al asesor:', err);
+      return res.status(500).json({ error: 'Error al insertar en la base de datos' });
+    }
+    res.json({ message: 'Materias asignadas correctamente' });
+  });
+});
+
+
+//Borrar una materia a un asesor
+router.post('/eliminar-materia', (req, res) => {
+  const { matricula, idMateria } = req.body;
+  if (!matricula || !idMateria) {
+    return res.status(400).json({ error: 'Faltan datos requeridos' });
+  }
+
+  const sql = `
+    DELETE FROM AsesorMateria
+    WHERE matriculaAsesor = ? AND idMateria = ?
+  `;
+  db.query(sql, [matricula, idMateria], (err, results) => {
+    if (err) {
+      console.error('Error al quitar materia del asesor:', err);
+      return res.status(500).json({ error: 'Error al eliminar en la base de datos' });
+    }
+    res.json({ message: 'Materia desasignada correctamente' });
+  });
+});
 module.exports = router;
