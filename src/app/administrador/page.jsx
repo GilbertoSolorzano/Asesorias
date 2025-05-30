@@ -52,13 +52,14 @@ const DashboardAdministrador = () => {
                 <h1 className="text-2xl font-bold text-center mb-8">Bienvenido, Administrador!</h1>
 
                 {/* Tarjetas dinámicas */}
-                <div className="space-y-6">
-                {asesorias.filter(asesoria => asesoria.estado !== 4)
-                .sort((a, b) => {
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                {asesorias
+                    .filter(asesoria => asesoria.estado !== 4)
+                    .sort((a, b) => {
                     const ordenDeseado = [2, 1, 3]; // Personaliza el orden aquí
                     return ordenDeseado.indexOf(a.estado) - ordenDeseado.indexOf(b.estado);
-                })
-                .map((asesoria) => (
+                    })
+                    .map((asesoria) => (
                     <div
                         key={asesoria.idAsesoria}
                         className={`${getColorClase(asesoria.estado)} p-6 rounded-md shadow-md text-center`}
@@ -68,10 +69,13 @@ const DashboardAdministrador = () => {
                         {asesoria.asesor && <p>Asesor: {asesoria.asesor}</p>}
                         <p className="font-light">Estado: {getTextoEstado(asesoria.estado)}</p>
                         {asesoria.lugar && <p className="italic">Lugar: {asesoria.lugar}</p>}
-                        {asesoria.fecha_acordada && <p>Fecha: {new Date(asesoria.fecha_acordada).toLocaleString()}</p>}
+                        {asesoria.fecha_acordada && (
+                        <p>Fecha: {new Date(asesoria.fecha_acordada).toLocaleString()}</p>
+                        )}
                     </div>
-                ))}
+                    ))}
                 </div>
+
             </div>
         </div>
     );
