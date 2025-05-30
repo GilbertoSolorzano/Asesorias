@@ -3,10 +3,14 @@ import AsesorDataGraph from '@/components/AsesorDataGraph'
 import AsesorCard from '@/components/AsesorCard'
 import HamburgerMenu from '@/components/HamburgerMenu'
 import React, { useEffect, useState } from 'react'
+import ChatModal from "@/components/ChatModal"; 
 
 const HistorialPage = () => {
   const [matricula, setMatricula] = useState(null);
   const [asesoriaTerminada, setAsesoriaTerminada] = useState([])
+  const [idChatAsesoria, setIdChatAsesoria] = useState(null);
+  const [mensajes, setMensajes] = useState([]);
+  const [mostrarChat, setMostrarChat] = useState(false);
 
   // Leer la matricula del localStorage
   useEffect(() => {
@@ -55,11 +59,33 @@ const HistorialPage = () => {
                 timeStyle: 'short'
               })}
               status="Finalizada" // si deseas mostrar un estado fijo
-              onMensaje={() => console.log("Mensaje a", at.nombreAlumno)} // opcional
+                  onMensaje={() => {
+                    setIdChatAsesoria(at.idAsesoria);
+                    fetch(`http://localhost:3001/api/alumno/mensajes/${at.idAsesoria}`)
+                      .then(res => res.json())
+                      .then(data => {
+                        setMensajes(data);
+                        setMostrarChat(true);
+                      })
+                      .catch(err => {
+                        console.error("Error al cargar mensajes:", err);
+                        setMensajes([]);
+                        setMostrarChat(true);
+                      });
+                  }}
+
             />
           ))}
         </div>
       </main>
+      {mostrarChat && (
+      <ChatModal
+          visible={mostrarChat}
+          mensajes={mensajes}
+          onClose={() => setMostrarChat(false)}
+        />
+      )}
+
     </div>
   )
 }
