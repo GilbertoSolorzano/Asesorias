@@ -21,8 +21,12 @@ const AsesorPage = () => {
   const [chatMessages, setChatMessages] = useState([]);
   // Leer la matricula del localStorage
   useEffect(() => {
-    const m = localStorage.getItem('matricula');
-    setMatricula(m);
+    const m = sessionStorage.getItem('matricula');
+    if (m) {
+      setMatricula(m);
+    } else {
+      router.push('/login');
+    }
   }, []);
 
   //Fetch de las solicitudes
@@ -33,11 +37,11 @@ const AsesorPage = () => {
         const res = await fetch(`http://localhost:3001/api/asesor/asesorias/solicitud?matricula=${matricula}`);
         if (!res.ok) throw new Error(`Error al cargar solicitudes: ${res.status}`);
         const data = await res.json();
-        const mSolicitudes = data.map((sol) => ({
+        const mSolicitudes = data.map(sol => ({
           idAsesoria: sol.id,
-          materia: sol.tema,
-          nombre: sol.nombreAlumno,
-          notas: sol.notas
+          materia:    sol.tema,
+          nombre:     sol.nombre,
+          notas:      sol.notas
         }));
         setSolicitudes(mSolicitudes);
       } catch (error) {
@@ -130,7 +134,7 @@ const AsesorPage = () => {
               // Aqui comienza el mapeo de asesorias aceptadas
               <AsesorSecCard 
                 key={a.idAsesoria}
-                tema={a.tema}
+                tema={a.nombreTema}
                 nombre={a.nombreAlumno}
                 fechaAcordada={new Date(a.fecha).toLocaleString('es-MX', {
                   dateStyle: 'medium',
@@ -167,7 +171,10 @@ const AsesorPage = () => {
                     headers: {
                       'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ idAsesoria }),
+                    body: JSON.stringify({ 
+                      idAsesoria,
+                      matriculaAsesor: matricula
+                    }),
                   });
                   
                   if (!res.ok) throw new Error('No se pudo aceptar la asesoría');

@@ -10,8 +10,12 @@ const HistorialPage = () => {
 
   // Leer la matricula del localStorage
   useEffect(() => {
-    const m = localStorage.getItem('matricula');
-    setMatricula(m);
+    const m = sessionStorage.getItem('matricula');
+    if (m) {
+      setMatricula(m);
+    } else {
+      router.push('/login');
+    }
   }, []);
 
   useEffect(() => {

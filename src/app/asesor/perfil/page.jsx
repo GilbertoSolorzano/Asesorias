@@ -228,16 +228,16 @@ const PerfilPage = () => {
           </div>
 
           {/* Capacitaciones */}
-          <div className="flex items-center justify-evenly">
-            <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center">
               <label className="w-32">Capacitaciones</label>
-              <div className="flex-1 flex items-center justify-between">
+              <div className="fflex-1 flex flex-wrap gap-2 overflow-x-auto px-4 justify-between">
                 {/* Materias seleccionadas */}
                 <div className="flex flex-wrap gap-2 overflow-x-auto max-w-[60%]">
                   {materiasAsignadas.map((materia) => (
                   <div
                     key={materia.idMateria}
-                    className="flex items-center bg-gray-300 text-black px-3 py-1 rounded-full text-sm font-medium"
+                    className="flex items-center bg-gray-300 text-black px-3 py-1 rounded-sm text-sm font-medium"
                   >
                     {materia.nombreMateria}
                     <button
@@ -253,7 +253,7 @@ const PerfilPage = () => {
                 </div>
 
                 {/* Botón Añadir */}
-                <div className='flex justify-end'>
+                <div className=''>
                   <button
                     className="bg-[#FFC943] text-white px-4 py-2 rounded font-semibold hover:bg-green-600"
                     onClick={() => setMostrarMaterias(true)}
