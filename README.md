@@ -9,7 +9,6 @@ Un sistema de asesorías desarrollado en React (.jsx) que permite gestionar, pro
 - [Instalación](#instalación)
 - [Uso](#uso)
 - [Estructura del Proyecto](#estructura-del-proyecto)
-- [Licencia](#licencia)
 - [Contacto](#contacto)
 
 ## Características
@@ -82,24 +81,75 @@ Npm install socket.io-client
 
 ```
 
-## Integrantes
+## Motor de base de datos: MariaDBMore actions
 
-#### Acosta Leon Brayan
+Se utiliza el motor de base de datos MariaDB, instalando desde su sitio oficial - https://mariadb.com/downloads/ - la version mas reciente.
+Una vez que MariaDB este instalado, se ejecutara pegara en la terminal de MariaDB el scrip de la base de datos llamado base.sql que se encuentra dentro de la carpeta: src/base/base.sql
+Es necesario modificar el archivo .env, para modificar el password de acuerdo a la del usuario en local, se utilizo como el usuario "root" por defecto.
 
-#### Daniel Ulises Reyes Bojorquez
+### Clonar el Repositorio
 
-#### Flores Hernandez Roberto David
+```bash
+git clone https://github.com/GilbertoSolorzano/Asesorias.git
+cd asesorias
+```
 
-#### Heredia Andrey Victor Felipe
+### Instalar Dependencias
 
-#### Solorzano Galvez Gilberto Jesus
+```bash
+npm install react react-dom next
+npm install axios
+npm install @heroicons/react lucide-react
+npm install chart.js react-chartjs-2
+npm install tailwindcss @tailwindcss/postcss
+npm install chart.js react-chartjs-2
+npm install express
+npm install cors
+npm install body-parser
+npm install dotenv
+npm install mysql2
+npm install nodemailer
+npm install dotenv
+Npm install socket.io
+Npm install socket.io-client
+
+```
+
+### Ejcutar en servidor local
+
+Para ejcutar el proyecto de manera local se abriran 2 termianles para encender los servidores.
+En la primera terminal se ejecutara el siguiente comando:
+
+bash
+npm run dev
+
+Este comando nos dara la liga para ver nuestras pantallas en funcionamiento, solo funcionara lo visual
+
+Para encender el servidor de la base de datos se ejcutara el siguiente comando
+
+bash
+npm run dev
+
+Con esto, las vistas tendran acceso a la base de datos y se consumiran los datos que se encuentran en ella, a demas que nos permitira agregar nuevos datos.
 
 ## Documentos del Proycto
 
 ### Diseño Detallado
 
-#### Link
+https://docs.google.com/document/d/1bo9kx2KI05YAuv4gxp-yqfAsYqlYQXil34MIiM_TBcc/edit?usp=sharing
 
-### Manual de Usuarios
+### Manual Tecnico
 
-#### Link
+https://docs.google.com/document/d/1o4_a_QTBeOQzPa2O9d0kDBcY0RzdIIDjAMFDh4gXStw/edit?usp=sharing
+
+## Contacto
+
+#### Acosta Leon Brayan - al22760576@ite.edu.mx
+
+#### Flores Hernandez Roberto David - al22760241@ite.edu.mx
+
+#### Heredia Andrey Victor Felipe - al22760587@ite.edu.mx
+
+#### Reyes Bojorquez Daniel Ulises - al22760594@ite.edu.mx
+
+#### Solorzano Galvez Gilberto Jesus - al22760235@ite.edu.mx

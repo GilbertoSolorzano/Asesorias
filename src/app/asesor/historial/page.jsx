@@ -1,11 +1,11 @@
 'use client'
-import AsesorDataGraph from '@/components/AsesorDataGraph'
 import AsesorCard from '@/components/AsesorCard'
+import AsesorDataGraph from '@/components/AsesorDataGraph'
 import HamburgerMenu from '@/components/HamburgerMenu'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import ChatModal from "@/components/ChatModal"; 
 
-const HistorialPage = () => {
+export default function HistorialPage() {
   const [matricula, setMatricula] = useState(null);
   const [asesoriaTerminada, setAsesoriaTerminada] = useState([])
   const [idChatAsesoria, setIdChatAsesoria] = useState(null);
@@ -23,6 +23,7 @@ const HistorialPage = () => {
   }, []);
 
   useEffect(() => {
+    if (!matricula) return
     const fetchAsesorias = async () => {
         try {
             const res = await fetch(`http://localhost:3001/api/asesor/asesorias/asesorias-finalizadas?matricula=${matricula}`);
@@ -90,4 +91,3 @@ const HistorialPage = () => {
   )
 }
 
-export default HistorialPage

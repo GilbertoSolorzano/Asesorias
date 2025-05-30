@@ -1,7 +1,7 @@
 'use client'
-import HamburgerMenu from '@/components/HamburgerMenu'
-import React, { useState, useEffect } from 'react'
+import HamburgerMenu from '@/components/HamburgerMenu';
 import { Eye, EyeOff } from "lucide-react";
+import { useEffect, useState } from 'react';
 
 const PerfilPage = () => {
   const [matricula, setMatricula] = useState(null);
@@ -51,6 +51,7 @@ const PerfilPage = () => {
   }, []);
 
   useEffect(() => {
+    if (!matricula) return;
     const fetchMateriasAsignadas = async () => {
       try {
         const res = await fetch(`http://localhost:3001/api/asesor/materias-asignadas?matricula=${matricula}`);
@@ -124,6 +125,7 @@ const PerfilPage = () => {
 
   }
   useEffect(() => {
+    if (!matricula) return;
     const fetchPerfil = async () => {
       try {
         const res = await fetch(`http://localhost:3001/api/asesor/asesorias/perfil-asesor?matricula=${matricula}`);
@@ -369,8 +371,12 @@ const PerfilPage = () => {
                   <button
                     className="px-4 py-2 rounded bg-green-500 text-white hover:bg-green-600"
                     onClick={() => {
-                      console.log('Materias seleccionadas:', materiasSeleccionadas);
-                      handleGuardarMaterias();
+                      try{
+                        console.log('Materias seleccionadas:', materiasSeleccionadas);
+                        handleGuardarMaterias();
+                      } catch (error){
+                        console.error('Error al guardar las materias:', error);
+                      }
                     }}
                   >
                     Guardar

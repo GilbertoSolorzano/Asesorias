@@ -2,10 +2,10 @@
 'use client';
 
 import AsesorSecCard from '@/components/AsesorSecCard';
+import ChatWidget from '@/components/ChatWidget';
 import HamburgerMenu from "@/components/HamburgerMenu";
 import SolicitudCard from '@/components/SolicitudCard';
 import TerminarAsesoria from '@/components/TerminarAsesoria';
-import ChatWidget from '@/components/ChatWidget';
 import { useEffect, useState } from 'react';
 
 const AsesorPage = () => {
@@ -31,7 +31,7 @@ const AsesorPage = () => {
 
   //Fetch de las solicitudes
   useEffect(() => {
-    if (!matricula) return; 
+    if (!matricula) return;
     const fetchSolicitudes = async () => {
       try {
         const res = await fetch(`http://localhost:3001/api/asesor/asesorias/solicitud?matricula=${matricula}`);
@@ -53,6 +53,8 @@ const AsesorPage = () => {
 
   //Fetch de las asesorias activas
   useEffect(() => {
+    if (!matricula) return;
+
     const fetchAsesorias = async () => {
       try {
         const res = await fetch(`http://localhost:3001/api/asesor/asesorias/activas?matricula=${matricula}`);
@@ -134,7 +136,7 @@ const AsesorPage = () => {
               // Aqui comienza el mapeo de asesorias aceptadas
               <AsesorSecCard 
                 key={a.idAsesoria}
-                tema={a.nombreTema}
+                tema={a.tema}
                 nombre={a.nombreAlumno}
                 fechaAcordada={new Date(a.fecha).toLocaleString('es-MX', {
                   dateStyle: 'medium',
