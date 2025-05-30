@@ -5,7 +5,7 @@ export default function AsesorCardCompleted({
   tema,
   nombreAsesor,
   fechaAtendida,
-  //onVerChat,
+  onVerChat,
   onEncuesta,
   contestada = false
 }) {
@@ -19,7 +19,7 @@ export default function AsesorCardCompleted({
 
       <div className="flex flex-row gap-4 mt-4">
         <button
-          //onClick={onVerChat}
+          onClick={onVerChat}
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           Ver Chat

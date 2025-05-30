@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import HamburgerMenu from "@/components/HamburgerMenu";
 import AsesorCardCompleted from "@/components/AsesorCardCompleted";
 import EncuestaAlumno from "@/components/EncuestaAlumno";
+import ChatModal from "@/components/ChatModal"; 
+
 
 export default function HistorialPage() {
   const [mostrarEncuesta, setMostrarEncuesta] = useState(false);
@@ -13,6 +15,11 @@ export default function HistorialPage() {
   const [completadasPendientes, setCompletadasPendientes] = useState([]);
   const [matricula, setMatricula] = useState(null);
   const router = useRouter();
+  const [mostrarChat, setMostrarChat] = useState(false);
+  const [idChatAsesoria, setIdChatAsesoria] = useState(null);
+  const [mensajes, setMensajes] = useState([]);
+
+
 
   // 1) Leer matrícula
   useEffect(() => {
@@ -68,7 +75,21 @@ export default function HistorialPage() {
                 tema={c.tema}
                 nombreAsesor={c.nombreAsesor}
                 fechaAtendida={c.fechaAtendida}
-                onVerChat={() => router.push(`/chat/${c.idAsesoria}`)}
+                onVerChat={() => {
+                  setIdChatAsesoria(c.idAsesoria);
+                  fetch(`http://localhost:3001/api/alumno/mensajes/${c.idAsesoria}`)
+                    .then(res => res.json())
+                    .then(data => {
+                      setMensajes(data);
+                      setMostrarChat(true);
+                    })
+                    .catch(err => {
+                      console.error("Error al cargar mensajes:", err);
+                      setMensajes([]);
+                      setMostrarChat(true);
+                    });
+                }}
+
                 onEncuesta={() => {
                   setAsesoriaSeleccionada(c);
                   setMostrarEncuesta(true);
@@ -92,6 +113,14 @@ export default function HistorialPage() {
           />
         )}
       </div>
+      {mostrarChat && (
+        <ChatModal
+          visible={mostrarChat}
+          mensajes={mensajes}
+          onClose={() => setMostrarChat(false)}
+        />
+      )}
+
     </div>
   );
 }
