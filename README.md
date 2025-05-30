@@ -81,40 +81,6 @@ Npm install socket.io-client
 
 ```
 
-## Motor de base de datos: MariaDBMore actions
-
-Se utiliza el motor de base de datos MariaDB, instalando desde su sitio oficial - https://mariadb.com/downloads/ - la version mas reciente.
-Una vez que MariaDB este instalado, se ejecutara pegara en la terminal de MariaDB el scrip de la base de datos llamado base.sql que se encuentra dentro de la carpeta: src/base/base.sql
-Es necesario modificar el archivo .env, para modificar el password de acuerdo a la del usuario en local, se utilizo como el usuario "root" por defecto.
-
-### Clonar el Repositorio
-
-```bash
-git clone https://github.com/GilbertoSolorzano/Asesorias.git
-cd asesorias
-```
-
-### Instalar Dependencias
-
-```bash
-npm install react react-dom next
-npm install axios
-npm install @heroicons/react lucide-react
-npm install chart.js react-chartjs-2
-npm install tailwindcss @tailwindcss/postcss
-npm install chart.js react-chartjs-2
-npm install express
-npm install cors
-npm install body-parser
-npm install dotenv
-npm install mysql2
-npm install nodemailer
-npm install dotenv
-Npm install socket.io
-Npm install socket.io-client
-
-```
-
 ### Ejcutar en servidor local
 
 Para ejcutar el proyecto de manera local se abriran 2 termianles para encender los servidores.
