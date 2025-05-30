@@ -10,8 +10,39 @@ const PerfilPage = () => {
   const [verConfirmacion, setVerConfirmacion] = useState(false);
   const [nuevaContrasena, setNuevaContrasena] = useState('');
   const [confirmarContrasena, setConfirmarContrasena] = useState('');
+  const [mostrarMaterias, setMostrarMaterias] = useState(false);
+  const [materiasSeleccionadas, setMateriasSeleccionadas] = useState([]);
+  const [materiasAsignadas, setMateriasAsignadas] = useState([]);
+  const [materias, setMaterias] = useState([]);
   const [msgError, setMsgError] = useState('');
   const [msgExito, setMsgExito] = useState('');
+  const [perfil, setPerfil] = useState({
+    nombreAsesor: '',
+    correo: '',
+    foto: '',
+    contraseñaActual: ''
+  });
+  const eliminarMateria = (idMateria) => {
+    setMateriasSeleccionadas(prev => prev.filter(id => id !== idMateria));
+  };
+  const toggleMateria = (idMateria) => {
+    setMateriasSeleccionadas((prev) =>
+      prev.includes(idMateria)
+        ? prev.filter((id) => id !== idMateria)
+        : [...prev, idMateria]
+    );
+  };
+  const fetchMateriasAsignadas = async () => {
+    try {
+      const res = await fetch(`http://localhost:3001/api/asesor/materias-asignadas?matricula=${matricula}`);
+      if (!res.ok) throw new Error('Error al obtener materias asignadas');
+      const data = await res.json();
+      return data; // Asumo que el backend devuelve un array con las materias
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  };
   
   // Leer la matricula del localStorage
   useEffect(() => {
@@ -19,12 +50,45 @@ const PerfilPage = () => {
     setMatricula(m);
   }, []);
 
-  const [perfil, setPerfil] = useState({
-    nombreAsesor: '',
-    correo: '',
-    foto: '',
-    contraseñaActual: ''
-  });
+  useEffect(() => {
+    const fetchMateriasAsignadas = async () => {
+      try {
+        const res = await fetch(`http://localhost:3001/api/asesor/materias-asignadas?matricula=${matricula}`);
+        if (!res.ok) throw new Error('Error al obtener materias asignadas');
+        const data = await res.json();
+        setMateriasAsignadas(data);
+      } catch (error) {
+        console.error('Error al cargar materias asignadas:', error);
+      }
+    };
+
+    fetchMateriasAsignadas();
+  }, [matricula]);
+
+
+  useEffect(() => {
+    if (!mostrarMaterias) return;
+
+    const fetchMaterias = async () => {
+      try {
+        const res = await fetch('http://localhost:3001/api/asesor/materias-disponibles');
+        if (!res.ok) throw new Error(`Error al cargar materias: ${res.status}`);
+        const data = await res.json();
+
+        const materiasFormateadas = data.map((m) => ({
+          id: m.idMateria,
+          nombre: m.nombreMateria,
+        }));
+
+        setMaterias(materiasFormateadas);
+      } catch (error) {
+        console.error('Error al obtener materias:', error);
+      }
+    };
+
+    fetchMaterias();
+  }, [mostrarMaterias]);
+  
 
   const handleCambiarContra = async () => {
     setMsgError('');
@@ -45,7 +109,7 @@ const PerfilPage = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          matricula: matriculaAsesor,
+          matricula: matricula,
           nuevaContrasena
         }),
       });
@@ -74,6 +138,55 @@ const PerfilPage = () => {
     };
     fetchPerfil();
   }, [matricula]);
+
+  const handleGuardarMaterias = async () => {
+    try {
+      const res = await fetch('http://localhost:3001/api/asesor/agregar-materia-asesor', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          matricula: matricula,
+          materias: materiasSeleccionadas, // array para varias materias
+        }),
+      });
+
+      if (!res.ok) throw new Error('Error al asignar materias');
+
+      // Refrescamos las materias asignadas en pantalla
+      const nuevasMaterias = await fetchMateriasAsignadas(); // Implementa esta función
+      setMateriasAsignadas(nuevasMaterias);
+      setMostrarMaterias(false);
+      setMateriasSeleccionadas([]);
+    } catch (error) {
+      console.error('Error al guardar materias:', error);
+    }
+  };
+
+  const handleEliminarMateria = async (idMateria) => {
+    try {
+      const res = await fetch(`http://localhost:3001/api/asesor/eliminar-materia`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          matricula: matricula,
+          idMateria: idMateria,
+        }),
+      });
+
+      if (!res.ok) throw new Error('Error al eliminar materia');
+
+      // Actualiza las materias asignadas tras la eliminación
+      setMateriasAsignadas((prev) =>
+        prev.filter((materia) => materia.idMateria !== idMateria)
+      );
+    } catch (error) {
+      console.error('Error al eliminar materia:', error);
+    }
+  };
 
 
   return (
@@ -113,6 +226,45 @@ const PerfilPage = () => {
               readOnly
               className="flex-1 p-2 text-black rounded bg-[#FFFFFF]" />
           </div>
+
+          {/* Capacitaciones */}
+          <div className="flex items-center justify-evenly">
+            <div className="flex items-center justify-between">
+              <label className="w-32">Capacitaciones</label>
+              <div className="flex-1 flex items-center justify-between">
+                {/* Materias seleccionadas */}
+                <div className="flex flex-wrap gap-2 overflow-x-auto max-w-[60%]">
+                  {materiasAsignadas.map((materia) => (
+                  <div
+                    key={materia.idMateria}
+                    className="flex items-center bg-gray-300 text-black px-3 py-1 rounded-full text-sm font-medium"
+                  >
+                    {materia.nombreMateria}
+                    <button
+                      onClick={() => handleEliminarMateria(materia.idMateria)}
+                      className="ml-2 text-black font-bold hover:text-red-700"
+                      aria-label={`Eliminar ${materia.nombreMateria}`}
+                      type="button"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+                </div>
+
+                {/* Botón Añadir */}
+                <div className='flex justify-end'>
+                  <button
+                    className="bg-[#FFC943] text-white px-4 py-2 rounded font-semibold hover:bg-green-600"
+                    onClick={() => setMostrarMaterias(true)}
+                  >
+                    Añadir
+                  </button>
+                </div>
+              </div>
+          </div>
+          </div>
+
           {/* Contraseña */}
           <div className="flex items-center">
             <label className="w-32">Contraseña actual:</label>
@@ -187,6 +339,46 @@ const PerfilPage = () => {
               Guardar Cambios
             </button>
           </div>
+
+          {/* Para mostrar las opciones de materias */}
+          {mostrarMaterias && (
+            <div className="fixed inset-0 backdrop-blur-sm bg-opacity-40 flex items-center justify-center z-50">
+              <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
+                <h2 className="text-xl text-black font-bold mb-4">Selecciona las materias</h2>
+
+                <div className="space-y-2 max-h-60 overflow-y-auto text-black">
+                  {materias.map((materia) => (
+                    <label key={materia.id} className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        checked={materiasSeleccionadas.includes(materia.id)}
+                        onChange={() => toggleMateria(materia.id)}
+                      />
+                      <span>{materia.nombre}</span>
+                    </label>
+                  ))}
+                </div>
+
+                <div className="mt-6 flex justify-end space-x-3">
+                  <button
+                    className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
+                    onClick={() => setMostrarMaterias(false)}
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    className="px-4 py-2 rounded bg-green-500 text-white hover:bg-green-600"
+                    onClick={() => {
+                      console.log('Materias seleccionadas:', materiasSeleccionadas);
+                      handleGuardarMaterias();
+                    }}
+                  >
+                    Guardar
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </div>
