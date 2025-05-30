@@ -10,6 +10,8 @@ import { useEffect, useState } from 'react';
 
 const AsesorPage = () => {
   const [matricula, setMatricula] = useState(null);
+  const [isModificarModalOpen, setIsModificarModalOpen] = useState(false);
+  const [modificarAsesoria, setModificarAsesoria] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFinalizarModalOpen, setIsFinalizarModalOpen] = useState(false);
   const [asesorias, setAsesorias] = useState([]);
@@ -125,7 +127,8 @@ const AsesorPage = () => {
           <div className="flex flex-col md:flex-row gap-4">
             {/* Asesorias Activas */}
             {asesorias.map((a) => (
-              <AsesorSecCard
+              // Aqui comienza el mapeo de asesorias aceptadas
+              <AsesorSecCard 
                 key={a.idAsesoria}
                 tema={a.tema}
                 nombre={a.nombreAlumno}
@@ -138,7 +141,13 @@ const AsesorPage = () => {
                   setAsesoriaSeleccionada(a.idAsesoria);
                   setIsFinalizarModalOpen(true);
                 }}
-                onModificar={() => console.log('Modificar', a.idAsesoria)}
+                onModificar={() => {
+                  setModificarAsesoria({
+                    ...a,
+                    fecha: new Date(a.fecha).toISOString().slice(0, 16), // formato para input datetime-local
+                  })
+                  setIsModificarModalOpen(true)
+                }}
                 onClickChat={() => abrirChat(a.idAsesoria)}
               />
             ))}
@@ -147,7 +156,7 @@ const AsesorPage = () => {
 
         {/* Modales */}
         {isModalOpen && (
-          <div className="absolute top-0.5 left-1/4 w-1/2 z-50">
+          <div className="absolute top-0.5 left-1/4 w-1/2 z-50 backdrop-blur-xs">
             <SolicitudCard
               onClose={() => setIsModalOpen(false)}
               solicitudes={solicitudes}
@@ -208,6 +217,79 @@ const AsesorPage = () => {
               initialMessages={chatMessages}
               onClose={() => setChatRoom(null)}
             />
+          </div>
+        </div>
+      )}
+
+      {isModificarModalOpen && modificarAsesoria && (
+        <div className="fixed inset-0 backdrop-blur-xs bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-[#BDD4E7] p-4 rounded border-[1.5px] w-96 shadow-lg">
+            <h2 className="text-lg font-semibold mb-2 text-center">Modificar Asesoría</h2>
+            <label className="block text-sm">Fecha acordada:</label>
+            <input
+              type="datetime-local"
+              className="w-full mb-2 p-1 border rounded"
+              value={modificarAsesoria.fecha}
+              onChange={(e) =>
+                setModificarAsesoria({
+                  ...modificarAsesoria,
+                  fecha: e.target.value,
+                })
+              }
+            />
+            <label className="block text-sm">Lugar:</label>
+            <input
+              type="text"
+              className="w-full mb-2 p-1 border rounded"
+              value={modificarAsesoria.lugar}
+              onChange={(e) =>
+                setModificarAsesoria({
+                  ...modificarAsesoria,
+                  lugar: e.target.value,
+                })
+              }
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                className="bg-red-500 text-white px-3 py-1 rounded"
+                onClick={() => setIsModificarModalOpen(false)}
+              >
+                Cancelar
+              </button>
+              <button
+                className="bg-green-500 text-white px-3 py-1 rounded"
+                onClick={async () => {
+                  try {
+                    const res = await fetch("http://localhost:3001/api/asesor/asesorias/modificar", {
+                      method: "PUT",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        idAsesoria: modificarAsesoria.idAsesoria,
+                        fecha_acordada: modificarAsesoria.fecha,
+                        lugar: modificarAsesoria.lugar,
+                      }),
+                    });
+
+                    if (!res.ok) throw new Error("Error al actualizar la asesoría");
+
+                    // Recargar asesorías activas
+                    const asesoriasRes = await fetch(`http://localhost:3001/api/asesor/asesorias/activas?matricula=${matricula}`);
+                    const asesoriasData = await asesoriasRes.json();
+                    setAsesorias(asesoriasData);
+
+                    setIsModificarModalOpen(false);
+                    setModificarAsesoria(null);
+                  } catch (err) {
+                    console.error("Error al modificar la asesoría:", err);
+                    alert("No se pudo modificar la asesoría");
+                  }
+                }}
+              >
+                Guardar
+              </button>
+            </div>
           </div>
         </div>
       )}
