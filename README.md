@@ -52,6 +52,7 @@ npm -v
 
 Se utiliza el motor de base de datos MariaDB, instalando desde su sitio oficial - https://mariadb.com/downloads/ - la version mas reciente.
 Una vez que MariaDB este instalado, se ejecutara pegara en la terminal de MariaDB el scrip de la base de datos llamado base.sql que se encuentra dentro de la carpeta: src/base/base.sql
+Necesario crear el archivo .env en la raiz copiando las credenciales de .env.example, para modificar el password de acuerdo a la del usuario en local, se utilizo como el usuario "root" por defecto.
 
 ### Clonar el Repositorio
 

@@ -101,6 +101,7 @@ CREATE TABLE Encuesta (
     idAsesoria INT NOT NULL,
     tipoEncuesta ENUM('alumno', 'asesor') NOT NULL,
     fechaCreacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    contestada TINYINT(1) NOT NULL DEFAULT 0,
     CONSTRAINT fk_encuesta_asesoria FOREIGN KEY (idAsesoria) REFERENCES Asesoria(idAsesoria),
     CONSTRAINT unq_encuesta UNIQUE (idAsesoria, tipoEncuesta)
 ) ENGINE = InnoDB;
@@ -152,5 +153,3 @@ CREATE TABLE IF NOT EXISTS ResetToken (
 
 
 
-ALTER TABLE Encuesta
-ADD COLUMN contestada TINYINT(1) NOT NULL DEFAULT 0;
