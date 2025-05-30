@@ -34,34 +34,34 @@ router.get('/asesorias/activas', (req, res) => {
 
 //Asesoria que no se ha aceptado o esta pendiente
 router.get('/asesorias/solicitud', (req, res) => {
-    const { matricula } = req.query;
+  const { matricula } = req.query;
+  if (!matricula) 
+    return res.status(400).json({ error: 'Matrícula no proporcionada' });
 
-    if (!matricula) {
-        return res.status(400).json({ error: 'Matrícula no proporcionada' });
+  const sql = `
+    SELECT
+      a.idAsesoria    AS id,
+      t.nombreTema    AS tema,
+      al.nombre       AS nombre,
+      t.descripcion   AS notas
+    FROM Asesoria AS a
+    JOIN Tema          AS t  ON a.idTema        = t.idTema
+    JOIN Alumno        AS al ON a.matriculaAlumno = al.matricula
+    JOIN AsesorMateria AS am ON t.idMateria     = am.idMateria
+    WHERE
+      a.estado = 1                  -- pendientes
+      AND a.matriculaAsesor IS NULL -- aún sin asignar
+      AND am.matriculaAsesor = ?;   -- tu parámetro de login
+  `;
+
+  db.query(sql, [matricula], (err, results) => {
+    if (err) {
+      console.error('Error al obtener solicitudes:', err);
+      return res.status(500).json({ error: 'Error en la base de datos' });
     }
-
-    const sql = `
-        SELECT
-            ase.idAsesoria AS id,
-            t.nombreTema AS tema,
-            al.nombre AS nombreAlumno,
-            t.descripcion as notas,
-            ase.estado AS status
-
-        FROM Asesoria AS ase
-        JOIN Alumno AS al ON ase.matriculaAlumno = al.matricula 
-        JOIN Tema AS t ON ase.idTema = t.idTema
-        WHERE ase.estado = 0 AND ase.matriculaAsesor = ?;
-    `;
-
-    db.query(sql, [matricula], (err, results) => {
-        if (err) {
-            console.error('Error al obtener solicitud de asesoría:', err);
-            return res.status(500).json({ error: 'Error al consultar la base de datos' });
-        }
-
-        res.json(results);
-    });
+    console.log(`Solicitudes para ${matricula}:`, results);
+    res.json(results);
+  });
 });
 
 //Asesorias finalizadas
@@ -147,21 +147,27 @@ router.post('/asesorias/finalizar-asesoria', (req, res) => {
 
 //Aceptar o programar una asesoria
 router.post('/asesorias/aceptar-asesoria', (req, res) => {
-    const { idAsesoria } = req.body;
+    console.log("💡 body recibido en POST /aceptar-asesoria:", req.body);
+    const { idAsesoria, matriculaAsesor } = req.body;
 
-    if (!idAsesoria) {
-        return res.status(400).json({ error: 'ID de asesoría no proporcionado' });
+    if (!idAsesoria || !matriculaAsesor) {
+        return res.status(400).json({ error: 'ID de asesoría o matrícula de asesor no proporcionados' });
     }
 
-    const sql = `UPDATE Asesoria SET estado = 3 WHERE idAsesoria = ?`;
+    const sql = `
+        UPDATE Asesoria
+        SET estado = 3,
+            matriculaAsesor = ?
+        WHERE idAsesoria = ?
+    `;
 
-    db.query(sql, [idAsesoria], (err, results) => {
+    db.query(sql, [matriculaAsesor, idAsesoria], (err, results) => {
         if (err) {
-            console.error('Error al aceptar la asesoría:', err);
-            return res.status(500).json({ error: 'Error al actualizar la base de datos' });
+        console.error('Error al aceptar la asesoría:', err);
+        return res.status(500).json({ error: 'Error al actualizar la base de datos' });
         }
-
-        res.json({ message: 'Asesoría aceptada correctamente', results });
+        res.json({ message: 'Asesoría aceptada y asesor asignado correctamente', results });
+        res.json({ message: 'Asesoría aceptada y asesor asignado correctamente' });
     });
 });
 
