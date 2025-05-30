@@ -150,25 +150,29 @@ export default function HomePage() {
             <p className="text-black">No tienes solicitudes aceptadas.</p>
           ) : (
             <div className="grid grid-cols-3 gap-4">
-              {aceptadas.map((a) => (
-                <div
-                  key={a.idAsesoria}
-                  className="bg-blue-500 text-white p-4 rounded-lg shadow-md"
-                >
-                  <h3 className="text-lg font-bold mb-1">{a.nombreMateria}</h3>
-                  <p className="text-sm">Tema: {a.nombreTema}</p>
-                  <p className="text-sm">Lugar: {a.lugar}</p>
-                  <p className="text-sm">Fecha: {new Date(a.fecha_creacion).toLocaleString()}</p>
-                  <p className="text-sm">Asesor: {a.matriculaAsesor}</p>
-                  <button
-                    onClick={() => abrirChat(a.idAsesoria)}
-                    className="mt-2 bg-white text-blue-500 px-3 py-1 rounded hover:bg-blue-100"
-                  >
-                    Mensaje
-                  </button>
-                </div>
-              ))}
-            </div>
+  {aceptadas.map((a) => {
+    console.log(a);
+    return (
+      <div
+        key={a.idAsesoria}
+        className="bg-blue-500 text-black p-4 rounded-lg shadow-md"
+      >
+        <h3 className="text-lg font-bold mb-1">{a.nombreMateria}</h3>
+        <p className="text-sm">Tema: {a.nombreTema}</p>
+        <p className="text-sm">Lugar: {a.lugar}</p>
+        <p className="text-sm">Fecha: {new Date(a.fecha_creacion).toLocaleString()}</p>
+        <p className="text-sm">Asesor: {a.nombreAsesor}</p>
+        <button
+          onClick={() => abrirChat(a.idAsesoria)}
+          className="mt-2 bg-white text-blue-500 px-3 py-1 rounded hover:bg-blue-100"
+        >
+          Mensaje
+        </button>
+      </div>
+    );
+  })}
+</div>
+
           )}
         </section>
       </main>

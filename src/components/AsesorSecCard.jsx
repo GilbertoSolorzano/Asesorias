@@ -2,7 +2,7 @@ import React from 'react';
 
 const AsesorSecCard = ({ tema, nombre, fechaAcordada, lugar, onModificar, onFinalizar, onClickChat }) => {
   return (
-    <div className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl border rounded-lg p-4 shadow-md bg-[#BDD4E7]">
+    <div className="w-full max-w-xs sm:max-w-sm md:max-w-md text-black lg:max-w-lg xl:max-w-xl border rounded-lg p-4 shadow-md bg-[#BDD4E7]">
       <h3 className="text-xs font-bold">Tema: {tema}</h3>
       <p className="text-xs">Nombre alumno: {nombre}</p>
       <p className="text-xs">Fecha acordada: {fechaAcordada}</p>

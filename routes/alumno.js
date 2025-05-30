@@ -75,10 +75,12 @@ router.get('/asesorias', (req, res) => {
     a.estado,
     a.fecha_creacion,
     t.nombreTema,
-    m.nombreMateria
+    m.nombreMateria,
+    s.nombre AS nombreAsesor
   FROM Asesoria a
   JOIN Tema t ON a.idTema = t.idTema
   JOIN Materia m ON t.idMateria = m.idMateria
+  LEFT JOIN Asesor s ON a.matriculaAsesor = s.matricula
   `;
   const params = [];
   if (matricula) {
@@ -94,6 +96,7 @@ router.get('/asesorias', (req, res) => {
     res.json(results);
   });
 });
+
 
 // Crear nueva solicitud de asesoría
 router.post('/asesorias', (req, res) => {
@@ -338,11 +341,10 @@ router.get('/asesorias/:idAsesoria', (req, res) => {
       t.nombreTema,
       m.nombreMateria,
       s.nombre AS nombreAsesor
-      e.contestada
     FROM Asesoria a
     JOIN Tema t ON a.idTema = t.idTema
     JOIN Materia m ON t.idMateria = m.idMateria
-    LEFT JOIN Asesor s ON a.matriculaAsesor = s.matricula
+    JOIN Asesor s ON a.matriculaAsesor = s.matricula
     WHERE a.idAsesoria = ?
   `;
   db.query(sql, [idAsesoria], (err, results) => {
@@ -356,6 +358,7 @@ router.get('/asesorias/:idAsesoria', (req, res) => {
     res.json(results[0]);
   });
 });
+
 
 router.get('/preguntas/alumno', async (req, res) => {
   try {

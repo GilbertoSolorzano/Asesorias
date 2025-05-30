@@ -89,7 +89,7 @@ export default function CrearAsesoriaModal({ onClose, matriculaAlumno, modoEdici
   };
 
   return (
-    <div className="bg-blue-500 p-6 rounded-lg shadow-lg relative">
+    <div className="bg-blue-500 p-6 text-black rounded-lg shadow-lg relative">
       <button
         onClick={onClose}
         className="absolute top-2 right-2 text-white text-xl"
