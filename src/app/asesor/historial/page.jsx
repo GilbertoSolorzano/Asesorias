@@ -52,7 +52,7 @@ export default function HistorialPage() {
       <aside className="bg-[#212227] w-full md:w-20 flex flex-col items-center py-4 md:h-full min-h-[60px]">
         <HamburgerMenu role="asesor" />
       </aside>
-      <div className="flex-1 p-8">
+      <div className="flex-1 p-2 m-0 sm:px-6 md:px8 py-6 overflow-x-auto">
         <header className="text-center mb-8">
           <h1 className="text-2xl font-bold text-zinc-950">
             Historial de Asesorías Completadas
@@ -62,63 +62,62 @@ export default function HistorialPage() {
           <AsesorDataGraph matricula={matricula} />
         </div>
         {completadas.length === 0 ? (
-                  <p className="text-gray-500">
-                    No tienes asesorías completadas aún.
-                  </p>
-                ) : (
-                  <div className="grid grid-cols-3 gap-8">
-                    {completadas.map((c) => (
-                      <AsesorCardCompleted
-                        key={c.idAsesoria}
-                        materia={c.materia}
-                        tema={c.tema}
-                        nombreAlumno={c.nombreAlumno}
-                        fechaAtendida={c.fechaAtendida}
-                        onVerChat={() => {
-                          setIdChatAsesoria(c.idAsesoria);
-                          fetch(`http://localhost:3001/api/alumno/mensajes/${c.idAsesoria}`)
-                            .then(res => res.json())
-                            .then(data => {
-                              setMensajes(data);
-                              setMostrarChat(true);
-                            })
-                            .catch(err => {
-                              console.error("Error al cargar mensajes:", err);
-                              setMensajes([]);
-                              setMostrarChat(true);
-                            });
-                        }}
+          <p className="text-gray-500">
+            No tienes asesorías completadas aún.
+          </p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 top-2">
+              {completadas.map((c) => (
+                <AsesorCardCompleted
+                  key={c.idAsesoria}
+                  materia={c.materia}
+                  tema={c.tema}
+                  nombreAlumno={c.nombreAlumno}
+                  fechaAtendida={c.fechaAtendida}
+                  onVerChat={() => {
+                    setIdChatAsesoria(c.idAsesoria);
+                    fetch(`http://localhost:3001/api/alumno/mensajes/${c.idAsesoria}`)
+                      .then(res => res.json())
+                      .then(data => {
+                        setMensajes(data);
+                        setMostrarChat(true);
+                      })
+                      .catch(err => {
+                        console.error("Error al cargar mensajes:", err);
+                        setMensajes([]);
+                        setMostrarChat(true);
+                      });
+                    }}
         
-                        onEncuesta={() => {
-                          setAsesoriaSeleccionada(c);
-                          setMostrarEncuesta(true);
-                        }}
-                        contestada={c.contestada === 1}
-                      />
-                    ))}
-                  </div>
-                )}
-      {mostrarEncuesta && asesoriaSeleccionada && (
-                <EncuestaAsesor
-                  idAsesoria={asesoriaSeleccionada.idAsesoria}
-                  matricula={matricula}
-                  onClose={() => {
-                    setMostrarEncuesta(false);
-                    setAsesoriaSeleccionada(null);
-                    cargarCompletadas(); // << refresca aquí para deshabilitar botón
+                  onEncuesta={() => {
+                    setAsesoriaSeleccionada(c);
+                    setMostrarEncuesta(true);
                   }}
+                  contestada={c.contestada === 1}
                 />
-              )}
+              ))}
             </div>
-            {mostrarChat && (
-              <ChatModal
-                visible={mostrarChat}
-                mensajes={mensajes}
-                onClose={() => setMostrarChat(false)}
-              />
-            )}
-
-    </div>
+          )}
+        {mostrarEncuesta && asesoriaSeleccionada && (
+          <EncuestaAsesor
+            idAsesoria={asesoriaSeleccionada.idAsesoria}
+            matricula={matricula}
+            onClose={() => {
+              setMostrarEncuesta(false);
+              setAsesoriaSeleccionada(null);
+              cargarCompletadas(); // << refresca aquí para deshabilitar botón
+            }}
+          />
+        )}
+      </div>
+        {mostrarChat && (
+          <ChatModal
+            visible={mostrarChat}
+            mensajes={mensajes}
+            onClose={() => setMostrarChat(false)}
+          />
+        )}
+  </div>
   )
 }
 

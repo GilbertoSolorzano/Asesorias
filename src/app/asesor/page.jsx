@@ -119,56 +119,67 @@ const AsesorPage = () => {
           <h1 className="text-2xl font-bold text-zinc-950">BIENVENIDO ASESOR!</h1>
         </header>
 
-        <section className="flex flex-col sm:flex-row gap-4">
-          {/* Botón para abrir modal */}
-          <div
-            className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl rounded-lg p-4 flex flex-col items-center justify-center border-2 border-dashed border-[#BDD4E7] hover:bg-blue-50 cursor-pointer"
-            onClick={() => setIsModalOpen(true)}
-          >
-            {solicitudes && solicitudes.length > 0 && (
-              <span className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-md">
-                {solicitudes.length}
-              </span>
-            )}
-            <p className="text-gray-500 text-sm mb-2">SOLICITUDES</p>
-            <div className="bg-gray-200 rounded-full w-16 h-16 mx-auto flex items-center justify-center">
-              <span className="text-gray-600 text-2xl font-bold">+</span>
+        <section className="flex-1 overflow-y-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {/* ───── Primera celda: Botón SOLICITUDES ───── */}
+            <div
+              className="relative w-full h-full max-h-40 sm:max-h-48 rounded-lg p-4 flex flex-col items-center justify-center border-2 border-dashed border-[#BDD4E7] hover:bg-blue-50 cursor-pointer"
+              onClick={() => setIsModalOpen(true)}
+            >
+              {solicitudes && solicitudes.length > 0 && (
+                <span className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-md">
+                  {solicitudes.length}
+                </span>
+              )}
+              <p className="text-gray-500 text-sm mb-2">SOLICITUDES</p>
+              <div className="bg-gray-200 rounded-full w-16 h-16 mx-auto flex items-center justify-center">
+                <span className="text-gray-600 text-2xl font-bold">+</span>
+              </div>
             </div>
-          </div>
 
-          <div className="flex flex-col md:flex-row gap-4">
-            {/* Asesorias Activas */}
-            {asesorias.map((a) => (
-              // Aqui comienza el mapeo de asesorias aceptadas
-              <AsesorSecCard 
-                key={a.idAsesoria}
-                tema={a.tema}
-                nombre={a.nombreAlumno}
-                fechaAcordada={new Date(a.fecha).toLocaleString('es-MX', {
-                  dateStyle: 'medium',
-                  timeStyle: 'short'
-                })}
-                lugar={a.lugar}
-                onFinalizar={() => {
-                  setAsesoriaSeleccionada(a.idAsesoria);
-                  setIsFinalizarModalOpen(true);
-                }}
-                onModificar={() => {
-                  setModificarAsesoria({
-                    ...a,
-                    fecha: new Date(a.fecha).toISOString().slice(0, 16), // formato para input datetime-local
-                  })
-                  setIsModificarModalOpen(true)
-                }}
-                onClickChat={() => abrirChat(a.idAsesoria,a.nombreAlumno)}
-              />
-            ))}
+            {/* ───── Celdas 2 y 3 (o más): Asesorías activas ───── */}
+            {asesorias.length === 0 ? (
+              <>
+                {/* Si no hay asesorías activas, puedes dejar celdas “vacías” o un mensaje */}
+                <div className="flex items-center justify-center border rounded-lg bg-white p-4 text-gray-500">
+                  Sin asesorías
+                </div>
+                <div className="flex items-center justify-center border rounded-lg bg-white p-4 text-gray-500">
+                  Sin asesorías
+                </div>
+              </>
+            ) : (
+              asesorias.map((a) => (
+                <AsesorSecCard
+                  key={a.idAsesoria}
+                  tema={a.tema}
+                  nombre={a.nombreAlumno}
+                  fechaAcordada={new Date(a.fecha).toLocaleString('es-MX', {
+                    dateStyle: 'medium',
+                    timeStyle: 'short'
+                  })}
+                  lugar={a.lugar}
+                  onFinalizar={() => {
+                    setAsesoriaSeleccionada(a.idAsesoria);
+                    setIsFinalizarModalOpen(true);
+                  }}
+                  onModificar={() => {
+                    setModificarAsesoria({
+                      ...a,
+                      fecha: new Date(a.fecha).toISOString().slice(0, 16), // formato para input datetime-local
+                    });
+                    setIsModificarModalOpen(true);
+                  }}
+                  onClickChat={() => abrirChat(a.idAsesoria, a.nombreAlumno)}
+                />
+              ))
+            )}
           </div>
         </section>
 
         {/* Modales */}
         {isModalOpen && (
-          <div className="absolute top-0.5 left-1/4 w-1/2 z-50 backdrop-blur-xs">
+          <div className="absolute top-0.5 left-1/4 w-1/2 z-50">
             <SolicitudCard
               onClose={() => setIsModalOpen(false)}
               solicitudes={solicitudes}
