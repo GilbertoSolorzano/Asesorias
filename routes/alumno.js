@@ -73,7 +73,8 @@ router.get('/asesorias', (req, res) => {
     a.idTema,
     a.lugar,
     a.estado,
-    a.fecha_creacion,
+    a.fecha_creacion,      
+    a.fecha_acordada, 
     t.nombreTema,
     m.nombreMateria,
     s.nombre AS nombreAsesor
@@ -124,7 +125,7 @@ router.post('/asesorias', (req, res) => {
 // Modificar una asesoría existente
 router.put('/asesorias/:idAsesoria', (req, res) => {
   const { idAsesoria } = req.params;
-  const { idTema, lugar, estado } = req.body;
+  const { idTema, lugar, estado, fecha_acordada } = req.body;
   if (!idTema && lugar === undefined && estado === undefined) {
     return res.status(400).json({ error: 'Nada que actualizar' });
   }
@@ -142,6 +143,10 @@ router.put('/asesorias/:idAsesoria', (req, res) => {
   if (estado !== undefined) {
     updates.push('estado = ?');
     params.push(estado);
+  }
+  if (fecha_acordada) {
+    updates.push('fecha_acordada = ?');
+  params.push(fecha_acordada);
   }
   params.push(idAsesoria);
 
@@ -378,7 +383,7 @@ router.get('/preguntas/alumno', async (req, res) => {
 
 // routes/alumno.js
 
-// routes/alumno.js
+
 
 router.post('/encuesta/alumno', async (req, res) => {
   const { idAsesoria, matriculaRespondente, respuestas } = req.body;
