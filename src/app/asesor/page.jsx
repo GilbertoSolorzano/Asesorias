@@ -246,7 +246,7 @@ const AsesorPage = () => {
               <input
                 type="datetime-local"
                 className="w-full mb-2 p-1 border rounded"
-                value={modificarAsesoria.fecha}
+                value={modificarAsesoria.fecha || ""}
                 onChange={(e) =>
                   setModificarAsesoria({
                     ...modificarAsesoria,
@@ -258,7 +258,7 @@ const AsesorPage = () => {
               <input
                 type="text"
                 className="w-full mb-2 p-1 border rounded"
-                value={modificarAsesoria.lugar}
+                value={modificarAsesoria.lugar || ""}
                 onChange={(e) =>
                   setModificarAsesoria({
                     ...modificarAsesoria,
