@@ -102,11 +102,11 @@ Con esto, las vistas tendran acceso a la base de datos y se consumiran los datos
 
 ### Diseño Detallado
 
-https://drive.google.com/file/d/1RYdBsT7RULqa7kF58lQJKSDNGIhhXhsh/view?usp=drive_link
+https://drive.google.com/file/d/16m1uJaIxavgKmGVY78SCf5Wsx4wLstFL/view?usp=sharing
 
 ### Manual Tecnico
 
-https://drive.google.com/file/d/16m1uJaIxavgKmGVY78SCf5Wsx4wLstFL/view?usp=drive_link
+https://drive.google.com/file/d/16m1uJaIxavgKmGVY78SCf5Wsx4wLstFL/view?usp=sharing
 
 ## Contacto
 
