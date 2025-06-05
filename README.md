@@ -102,7 +102,7 @@ Con esto, las vistas tendran acceso a la base de datos y se consumiran los datos
 
 ### Diseño Detallado
 
-https://drive.google.com/file/d/16m1uJaIxavgKmGVY78SCf5Wsx4wLstFL/view?usp=sharing
+https://drive.google.com/file/d/1QVlXWu2de8GUSF0Sa7bcFtoi0lEnN9Wu/view?usp=drive_link
 
 ### Manual Tecnico
 
